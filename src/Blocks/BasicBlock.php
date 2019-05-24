@@ -20,20 +20,29 @@ class BasicBlock extends Entity implements BlockInterface
     public function toTypedBlock(): BasicBlock
     {
         $types = [
+            'page' => PageBlock::class,
             'collection' => CollectionBlock::class,
             'collection_view' => CollectionViewBlock::class,
         ];
 
-        $blockType = $types[$this->get('type')] ?? null;
-
-        return $blockType
+        $blockType =
+            $this->get('parent_table') === 'collection'
+                ? CollectionRowBlock::class
+                : $types[$this->get('type')] ?? null;
+        $block = $blockType
             ? new $blockType($this->getId(), $this->getRecordMap())
             : $this;
+
+        if ($this->client) {
+            $block->setClient($this->client);
+        }
+
+        return $block;
     }
 
     public function getTitle(): string
     {
-        return $this->getTextAttribute('properties.title');
+        return $this->getProperty('title');
     }
 
     public function getDescription(): string
@@ -65,6 +74,11 @@ class BasicBlock extends Entity implements BlockInterface
             default:
                 return null;
         }
+    }
+
+    public function getProperty(string $key)
+    {
+        return $this->getTextAttribute('properties.'.$key);
     }
 
     protected function getTextAttribute(string $propertyName): string

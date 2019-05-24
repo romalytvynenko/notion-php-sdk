@@ -11,7 +11,6 @@ require '../vendor/autoload.php';
 $client = new NotionClient(getenv('NOTION_TOKEN'));
 $collectionView = $client->getBlock('https://www.notion.so/anahkiasen/3d13a98be599441485953749b4dbc8ad?v=f3c354c0549e4589adf10d7eff46a512');
 $collection = $collectionView->getCollection();
-dd($collection, $collection->getChildren());
 ?>
 <!doctype html>
 <html lang="en">
@@ -37,8 +36,8 @@ dd($collection, $collection->getChildren());
     <?php foreach ($collection->getChildren() as $child): ?>
     <tr>
         <td><?= $child->getId()->toString() ?></td>
-        <td><?= $child->getTitle() ?></td>
-        <td><?= $child->getProperty('Done') ? 'Y' : 'N' ?></td>
+        <td><?= $child->getProperty('Name') ?></td>
+        <td><?= $child->getProperty('Done') === 'Yes' ? '[x]' : '[ ]' ?></td>
     </tr>
     <?php endforeach; ?>
 </table>

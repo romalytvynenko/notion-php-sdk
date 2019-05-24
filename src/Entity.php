@@ -74,6 +74,11 @@ class Entity
         return Arr::get($this->attributes, $key);
     }
 
+    public function set(string $key, $value): void
+    {
+        Arr::set($this->attributes, $key, $value);
+    }
+
     public function setAttributes(array $attributes): void
     {
         $this->attributes = $attributes;
