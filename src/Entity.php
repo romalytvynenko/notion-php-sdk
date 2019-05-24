@@ -5,48 +5,33 @@ namespace Notion;
 use Illuminate\Support\Arr;
 use Ramsey\Uuid\UuidInterface;
 
-class Block
+class Entity
 {
     /**
      * @var UuidInterface
      */
-    private $id;
+    protected $id;
 
     /**
      * @var array
      */
-    private $recordMap;
+    protected $recordMap;
 
     /**
      * @var array
      */
-    private $attributes;
+    protected $attributes;
 
-    public function __construct(UuidInterface $id, $attributes)
+    /**
+     * @var NotionClient
+     */
+    protected $client;
+
+    public function __construct(UuidInterface $id, $recordMap)
     {
         $this->id = $id;
-        $this->recordMap = $attributes;
-        $this->attributes = Arr::get(
-            $this->recordMap,
-            'block.'.$this->id->toString().'.value'
-        );
-    }
-
-    public function getTitle(): string
-    {
-        return Arr::first(
-            Arr::flatten($this->getAttribute('properties.title'))
-        );
-    }
-
-    public function getRecordMap(): array
-    {
-        return $this->recordMap;
-    }
-
-    public function setRecordMap(array $recordMap): void
-    {
         $this->recordMap = $recordMap;
+        $this->attributes = $recordMap;
     }
 
     public function getId(): UuidInterface
@@ -59,12 +44,32 @@ class Block
         $this->id = $id;
     }
 
+    public function getRecordMap(): array
+    {
+        return $this->recordMap;
+    }
+
+    public function setRecordMap(array $recordMap): void
+    {
+        $this->recordMap = $recordMap;
+    }
+
+    public function getClient(): NotionClient
+    {
+        return $this->client;
+    }
+
+    public function setClient(NotionClient $client): void
+    {
+        $this->client = $client;
+    }
+
     public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    public function getAttribute(string $key)
+    public function get(string $key)
     {
         return Arr::get($this->attributes, $key);
     }

@@ -10,6 +10,7 @@
     },
     "require-dev": {
         "madewithlove/php-cs-fixer-config": "^1.10",
+        "phpunit/phpunit": "^7.5",
         "roave/security-advisories": "dev-master",
         "symfony/dotenv": "^4.2",
         "symfony/var-dumper": "^4.2"
@@ -19,8 +20,14 @@
             "Notion\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Notion\\": "tests"
+        }
+    },
     "scripts": {
-        "lint": "prettier --write src/**/* --single-quote && php-cs-fixer fix -v"
+        "lint": "prettier --write src/**/* --single-quote && php-cs-fixer fix -v",
+        "test": "phpunit"
     },
     "config": {
         "sort-packages": true
