@@ -1,12 +1,17 @@
 {
+    "name": "anahkiasen/notion-php-sdk",
+    "license": "MIT",
     "require": {
         "ext-json": "*",
         "guzzlehttp/guzzle": "^6.3",
         "illuminate/support": "^5.8",
         "ramsey/uuid": "^3.8",
+        "symfony/cache": "^4.2",
         "symfony/dotenv": "^4.2"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-master",
+        "madewithlove/php-cs-fixer-config": "^1.10",
         "symfony/var-dumper": "^4.2"
     },
     "autoload": {
@@ -15,7 +20,7 @@
         }
     },
     "scripts": {
-        "lint": "prettier --write src/**/* --single-quote"
+        "lint": "prettier --write src/**/* --single-quote && php-cs-fixer fix -v"
     },
     "config": {
         "sort-packages": true
