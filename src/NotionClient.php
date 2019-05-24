@@ -5,6 +5,8 @@ namespace Notion;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Psr7\Request;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class NotionClient
 {
@@ -35,7 +37,7 @@ class NotionClient
         $block = $this->fetchBlock($blockId);
         $block = new Block($block);
 
-        dd($block, 'lol');
+        dd($block);
         /*
         if not block:
             return None
@@ -49,7 +51,7 @@ class NotionClient
         return block_class(self, $blockId)*/
     }
 
-    private function fetchBlock(string $blockId)
+    private function fetchBlock(UuidInterface $blockId)
     {
         $response = $this->client->post('loadPageChunk', [
             'headers' => [
@@ -57,7 +59,7 @@ class NotionClient
                 'Content-Type' => 'application/json; charset=utf-8'
             ],
             'body' => json_encode([
-                'pageId' => $blockId,
+                'pageId' => $blockId->toString(),
                 'limit' => 50,
                 'cursor' => ['stack' => []],
                 'chunkNumber' => 0,
@@ -71,10 +73,10 @@ class NotionClient
         return $response['recordMap'] ?? [];
     }
 
-    private function extractIdentifier(string $identifier)
+    private function extractIdentifier(string $identifier): UuidInterface
     {
         [, $identifier] = explode('-', $identifier);
 
-        return $identifier;
+        return Uuid::fromString($identifier);
     }
 }
