@@ -1,0 +1,22 @@
+{
+    "require": {
+        "symfony/dotenv": "^4.2",
+        "illuminate/support": "^5.8",
+        "guzzlehttp/guzzle": "^6.3",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Notion\\": "src"
+        }
+    },
+    "scripts": {
+        "lint": "prettier --write src/**/* --single-quote"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
