@@ -23,7 +23,7 @@ $rows = $todoPage->getRows()->sortBy(function (CollectionRowBlock $child) {
 
 $routinePage = $client->getBlock(
     'https://www.notion.so/anahkiasen/764e98e89e1b4b2da097fb5705ebd518?v=98149a197e31481099deb7143012336e'
-);
+)->getCollection();
 ?>
 <!doctype html>
 <html lang="en">
@@ -36,18 +36,18 @@ $routinePage = $client->getBlock(
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/minty/bootstrap.min.css">
 </head>
 <body style="padding: 2rem">
-<h1><?= $todoPage->getTitle() ?></h1>
-<h2><?= $todoPage->getDescription() ?></h2>
+<h1><?= $routinePage->getTitle() ?></h1>
 <ul>
     <?php echo $routinePage
         ->getRows()
-        ->sortBy('hour')
         ->map(function (CollectionRowBlock $block) {
             ?>
         <li><strong> <?= $block->hour ?>:</strong> <?= $block->name ?></li>
         <?php
         }); ?>
 </ul>
+<h1><?= $todoPage->getTitle() ?></h1>
+<h2><?= $todoPage->getDescription() ?></h2>
 <table class="table table-striped table-hover">
     <thead>
     <tr>
