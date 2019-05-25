@@ -1,9 +1,9 @@
 <?php
 
-namespace Notion\Blocks;
+namespace Notion\Entities\Blocks;
 
 use Illuminate\Support\Arr;
-use Notion\Entity;
+use Notion\Entities\Entity;
 use Ramsey\Uuid\UuidInterface;
 
 class BasicBlock extends Entity implements BlockInterface

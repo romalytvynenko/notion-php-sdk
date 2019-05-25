@@ -33,9 +33,6 @@ class RecordRequest implements Arrayable
         return $this->id;
     }
 
-    /**
-     * Get the instance as an array.
-     */
     public function toArray(): array
     {
         return ['table' => $this->table, 'id' => $this->id];

@@ -1,6 +1,6 @@
 <?php
 
-namespace Notion;
+namespace Notion\Entities;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

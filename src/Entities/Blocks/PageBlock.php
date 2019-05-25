@@ -1,6 +1,6 @@
 <?php
 
-namespace Notion\Blocks;
+namespace Notion\Entities\Blocks;
 
 class PageBlock extends BasicBlock
 {

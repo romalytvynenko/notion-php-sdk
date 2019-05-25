@@ -1,6 +1,6 @@
 <?php
 
-namespace Notion;
+namespace Notion\Entities;
 
 class Space extends Entity
 {

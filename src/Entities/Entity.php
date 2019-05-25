@@ -1,8 +1,9 @@
 <?php
 
-namespace Notion;
+namespace Notion\Entities;
 
 use Illuminate\Support\Arr;
+use Notion\NotionClient;
 use Ramsey\Uuid\UuidInterface;
 
 class Entity

@@ -1,6 +1,6 @@
 <?php
 
-use Notion\Blocks\CollectionViewBlock;
+use Notion\Entities\Blocks\CollectionViewBlock;
 use Notion\NotionClient;
 use Symfony\Component\Dotenv\Dotenv;
 
@@ -33,7 +33,7 @@ $collection = $collectionView->getCollection();
         <td>Done</td>
     </tr>
     </thead>
-    <?php foreach ($collection->getChildren() as $child): ?>
+    <?php foreach ($collection->getRows() as $child): ?>
     <tr>
         <td><?= $child->getId()->toString() ?></td>
         <td><?= $child->getProperty('Name') ?></td>

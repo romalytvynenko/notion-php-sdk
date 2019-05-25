@@ -1,8 +1,8 @@
 <?php
 
-namespace Notion\Blocks;
+namespace Notion\Entities\Blocks;
 
-use Notion\Identifier;
+use Notion\Entities\Identifier;
 
 class CollectionBlock extends BasicBlock
 {
@@ -12,11 +12,11 @@ class CollectionBlock extends BasicBlock
     }
 
     /**
-     * @return BlockInterface[]
+     * @return CollectionRowBlock[]
      */
-    public function getChildren(): array
+    public function getRows(string $query = ''): array
     {
-        $pages = $this->getClient()->getByParent($this->getId());
+        $pages = $this->getClient()->getByParent($this->getId(), $query);
         $blocks = collect($pages['block'])
             ->keys()
             ->map(function ($id) use ($pages) {
@@ -24,6 +24,7 @@ class CollectionBlock extends BasicBlock
                     Identifier::fromString($id),
                     $pages
                 ))->toTypedBlock();
+
                 $block->setClient($this->getClient());
 
                 $schema = $this->get('schema');
