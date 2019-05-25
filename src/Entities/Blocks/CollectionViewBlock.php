@@ -8,4 +8,9 @@ class CollectionViewBlock extends BasicBlock
     {
         return $this->getClient()->getCollection($this->get('collection_id'));
     }
+
+    public function getRows()
+    {
+        return $this->getCollection()->getRows();
+    }
 }

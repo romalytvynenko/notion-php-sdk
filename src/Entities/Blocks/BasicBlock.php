@@ -3,11 +3,19 @@
 namespace Notion\Entities\Blocks;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Notion\Entities\Entity;
+use Notion\Entities\Property;
 use Ramsey\Uuid\UuidInterface;
 
 class BasicBlock extends Entity implements BlockInterface
 {
+    /**
+     * @var Collection|Property[]
+     */
+    protected $properties;
+
     public function __construct(UuidInterface $id, $recordMap)
     {
         parent::__construct($id, $recordMap);
@@ -17,12 +25,23 @@ class BasicBlock extends Entity implements BlockInterface
         );
     }
 
+    public function __get($name)
+    {
+        return $this->getProperty($name);
+    }
+
+    public function __set($name, $value): void
+    {
+        $this->setProperty($name, $value);
+    }
+
     public function toTypedBlock(): BasicBlock
     {
         $types = [
             'page' => PageBlock::class,
             'collection' => CollectionBlock::class,
             'collection_view' => CollectionViewBlock::class,
+            'collection_view_page' => CollectionViewBlock::class,
         ];
 
         $blockType =
@@ -76,15 +95,58 @@ class BasicBlock extends Entity implements BlockInterface
         }
     }
 
-    public function getProperty(string $key)
+    public function getProperties(): Collection
     {
-        return $this->getTextAttribute('properties.'.$key);
+        return $this->properties;
+    }
+
+    public function setProperties(Collection $properties): void
+    {
+        $this->properties = $properties;
+    }
+
+    public function createPropertiesFromSchemas(array $schemas): void
+    {
+        $this->setProperties(
+            collect($schemas)->mapWithKeys(function ($schema, $hash) {
+                $property = $this->unwrapValue(
+                    $this->get('properties.'.$hash) ?? []
+                );
+                $name = $schema['name'] ?? '';
+
+                return [$name => new Property($schema, $property)];
+            })
+        );
+    }
+
+    public function getProperty(string $needle)
+    {
+        return $this->properties->first(function (
+            Property $property,
+            $key
+        ) use ($needle) {
+            return $key === $needle ||
+                Str::slug($property->getName()) === $needle;
+        });
+    }
+
+    public function setProperty(string $key, $value)
+    {
+        return $this->properties[$key] = $value;
     }
 
     protected function getTextAttribute(string $propertyName): string
     {
         $property = $this->get($propertyName) ?? [];
 
+        return $this->unwrapValue($property);
+    }
+
+    /**
+     * @return mixed|string
+     */
+    protected function unwrapValue(array $property)
+    {
         return Arr::first(Arr::flatten($property)) ?? '';
     }
 }

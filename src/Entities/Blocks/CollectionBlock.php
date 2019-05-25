@@ -2,6 +2,7 @@
 
 namespace Notion\Entities\Blocks;
 
+use Illuminate\Support\Collection;
 use Notion\Entities\Identifier;
 
 class CollectionBlock extends BasicBlock
@@ -14,10 +15,11 @@ class CollectionBlock extends BasicBlock
     /**
      * @return CollectionRowBlock[]
      */
-    public function getRows(string $query = ''): array
+    public function getRows(string $query = ''): Collection
     {
         $pages = $this->getClient()->getByParent($this->getId(), $query);
-        $blocks = collect($pages['block'])
+
+        return collect($pages['block'])
             ->keys()
             ->map(function ($id) use ($pages) {
                 $block = (new BasicBlock(
@@ -26,20 +28,12 @@ class CollectionBlock extends BasicBlock
                 ))->toTypedBlock();
 
                 $block->setClient($this->getClient());
-
-                $schema = $this->get('schema');
-                $properties = collect($block->get('properties'))->mapWithKeys(
-                    function ($property, $hash) use ($schema) {
-                        $name = $schema[$hash]['name'] ?? '';
-
-                        return [$name => $property];
-                    }
-                );
-                $block->set('properties', $properties->toArray());
+                $block->createPropertiesFromSchemas($this->get('schema'));
 
                 return $block;
+            })
+            ->filter(function (BlockInterface $block) {
+                return $block instanceof CollectionRowBlock;
             });
-
-        return $blocks->toArray();
     }
 }

@@ -35,6 +35,16 @@ class Entity
         $this->attributes = $recordMap;
     }
 
+    public function __get($name)
+    {
+        return $this->get($name);
+    }
+
+    public function __set($name, $value): void
+    {
+        $this->set($name, $value);
+    }
+
     public function getId(): UuidInterface
     {
         return $this->id;

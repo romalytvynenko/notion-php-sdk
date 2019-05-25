@@ -11,7 +11,9 @@ class Identifier extends Uuid
 {
     public static function fromString($name)
     {
-        return Str::contains($name, 'http') ? static::fromUrl($name) : parent::fromString($name);
+        return Str::contains($name, 'http')
+            ? static::fromUrl($name)
+            : parent::fromString($name);
     }
 
     public static function fromUrl(string $url): UuidInterface
@@ -19,7 +21,8 @@ class Identifier extends Uuid
         $identifier = $url;
         foreach (['#', '/', '&p=', '?', '-'] as $delimiter) {
             $pieces = explode($delimiter, $identifier);
-            $identifier = $delimiter === '?' ? Arr::first($pieces) : Arr::last($pieces);
+            $identifier =
+                $delimiter === '?' ? Arr::first($pieces) : Arr::last($pieces);
         }
 
         return static::fromString($identifier);

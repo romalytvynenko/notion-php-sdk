@@ -66,7 +66,9 @@ class NotionClient
     public function getCollection(string $identifier): CollectionBlock
     {
         $collectionId = Identifier::fromString($identifier);
-        $attributes = $this->getRecordValues(new RecordRequest('collection', $collectionId))['value'];
+        $attributes = $this->getRecordValues(
+            new RecordRequest('collection', $collectionId)
+        )['value'];
 
         $collection = new CollectionBlock($collectionId, []);
         $collection->setAttributes($attributes);
@@ -86,14 +88,17 @@ class NotionClient
                 'cursor' => ['stack' => []],
                 'chunkNumber' => 0,
                 'verticalColumns' => false,
-            ]);
+            ]
+        );
 
         return $response['recordMap'] ?? [];
     }
 
     private function getRecordValues(RecordRequest $request): ?array
     {
-        return $this->getRecordsValues([$request])[$request->getId()->toString()] ?? null;
+        return $this->getRecordsValues([$request])[
+            $request->getId()->toString()
+        ] ?? null;
     }
 
     /**
@@ -102,9 +107,16 @@ class NotionClient
     private function getRecordsValues(array $requests): array
     {
         $requests = collect($requests);
-        $response = $this->cachedJsonRequest(sha1($requests->toJson()), 'getRecordValues', ['requests' => $requests->toArray()]);
+        $response = $this->cachedJsonRequest(
+            sha1($requests->toJson()),
+            'getRecordValues',
+            ['requests' => $requests->toArray()]
+        );
 
-        $results = $requests->mapWithKeys(function (RecordRequest $request, $key) use ($response) {
+        $results = $requests->mapWithKeys(function (
+            RecordRequest $request,
+            $key
+        ) use ($response) {
             $id = $request->getId()->toString();
 
             return [$id => $response['results'][$key] ?? []];
@@ -117,12 +129,16 @@ class NotionClient
     {
         $response = $this->cachedJsonRequest(
             'by-parent-'.$getId->toString(),
-            'searchPagesWithParent', [
+            'searchPagesWithParent',
+            [
                 'query' => $query,
                 'parentId' => $getId->toString(),
                 'limit' => 10000,
-                'spaceId' => $this->getCurrentSpace()->getId()->toString(),
-            ]);
+                'spaceId' => $this->getCurrentSpace()
+                    ->getId()
+                    ->toString(),
+            ]
+        );
 
         return $response['recordMap'] ?? [];
     }
@@ -134,31 +150,35 @@ class NotionClient
 
     private function loadUserInformations(): void
     {
-        $response = $this->cachedJsonRequest('user-informations', 'loadUserContent');
+        $response = $this->cachedJsonRequest(
+            'user-informations',
+            'loadUserContent'
+        );
 
         $currentSpace = $response['recordMap']['space'];
         $currentSpace = Arr::first($currentSpace)['value'];
-        $this->currentSpace = new Space(Identifier::fromString($currentSpace['id']), $currentSpace);
+        $this->currentSpace = new Space(
+            Identifier::fromString($currentSpace['id']),
+            $currentSpace
+        );
     }
 
-    private function cachedJsonRequest(string $key, string $url, array $body = [])
-    {
-        return $this->cache->get(
-            $key,
-            function () use ($url, $body) {
-                $response = $this->client->post($url, [
-                    'headers' => [
-                        'Content-Type' => 'application/json; charset=utf-8',
-                    ],
-                    'body' => $body === [] ? '{}' : json_encode(
-                        $body
-                    ),
-                ]);
+    private function cachedJsonRequest(
+        string $key,
+        string $url,
+        array $body = []
+    ) {
+        return $this->cache->get($key, function () use ($url, $body) {
+            $response = $this->client->post($url, [
+                'headers' => [
+                    'Content-Type' => 'application/json; charset=utf-8',
+                ],
+                'body' => $body === [] ? '{}' : json_encode($body),
+            ]);
 
-                $response = $response->getBody()->getContents();
+            $response = $response->getBody()->getContents();
 
-                return json_decode($response, true);
-            }
-        );
+            return json_decode($response, true);
+        });
     }
 }
