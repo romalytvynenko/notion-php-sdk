@@ -18,9 +18,12 @@ $coffees = collect([
         return $client->getBlock('https://www.notion.so/madewithlove/' . $url);
     })
     ->map(function (CollectionViewBlock $view) {
-        return $view->getRows()->sortBy(function (CollectionRowBlock $row) {
-            return $row->name;
-        });
+        return $view
+            ->getRows()
+            ->sortByDesc(function (CollectionRowBlock $row) {
+                return $row->on_machine_since;
+            })
+            ->values();
     });
 ?>
 <!doctype html>
@@ -40,25 +43,33 @@ $coffees = collect([
             <div class="col">
                 <h1><?= $location ?> Coffee</h1>
                 <hr>
-                <?php /** @var CollectionRowBlock $row */
-                foreach ($rows as $row): ?>
-                    <div class="card mb-2">
+                 /** @var CollectionRowBlock $row */<?php
+            /** @var CollectionRowBlock $row */
+            ?>foreach ($rows as $key => $row): ?>
+                    <div class="card mb-2 <?php if (
+                        $key === 0
+                    ): ?>text-white bg-primary<?php endif; ?>">
                         <div class="card-body">
                             <h5 class="card-title">
                                 <?= $row->getIcon() ?>
                                 <?= $row->name ?>
                             </h5>
                             <?php if ($row->country || $row->region): ?>
-                                <h6 class="card-subtitle mb-2 text-muted">
-                                    from
-                                    <strong><?= trim(
-                                        sprintf('%s, %s', $row->country, $row->region),
-                                        ' ,'
-                                    ) ?></strong>
+                                <h6 class="card-subtitle mb-2">
+                                    <em>
+                                        from
+                                        <strong><?= trim(
+                                            sprintf('%s, %s', $row->country, $row->region),
+                                            ' ,'
+                                        ) ?></strong>
+                                    </em>
                                 </h6>
                             <?php endif; ?>
                             <p class="card-text">
                                 <strong>Roaster:</strong> <?= $row->roaster ?><br />
+                                <strong>On Machine Since:</strong> <?= $row->on_machine_since->format(
+                                    'Y-m-d'
+                                ) ?><br />
                                 <?php if ($row->tasting_notes): ?>
                                     <strong>Tasting Notes:</strong><br />
                                     <?= $row->tasting_notes ?><br />

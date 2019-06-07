@@ -122,7 +122,9 @@ class BasicBlock extends Entity implements BlockInterface
     public function getProperty(string $needle)
     {
         return $this->properties->first(function (Property $property, $key) use ($needle) {
-            return $key === $needle || Str::slug($property->getName()) === $needle || Str::snake($property->getName()) === $needle;
+            return $key === $needle ||
+                Str::slug($property->getName()) === $needle ||
+                Str::snake($property->getName()) === $needle;
         });
     }
 
@@ -143,7 +145,7 @@ class BasicBlock extends Entity implements BlockInterface
      */
     protected function unwrapValue(array $property)
     {
-        return Arr::first(Arr::flatten($property)) ?? '';
+        return Arr::last(Arr::flatten($property)) ?? '';
     }
 
     public function getCollection(): ?CollectionBlock

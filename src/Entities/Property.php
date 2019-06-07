@@ -42,6 +42,9 @@ class Property
     {
         $type = $this->schema['type'] ?? '';
         switch ($type) {
+            case 'date':
+                return new \DateTime($this->value);
+
             case 'multi_select':
             case 'select':
             case 'text':
