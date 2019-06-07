@@ -170,6 +170,15 @@ class BasicBlock extends Entity implements BlockInterface
         );
     }
 
+    public function getContents()
+    {
+        return $this->getChildren()
+            ->map(function (BasicBlock $block) {
+                return $block->getTitle();
+            })
+            ->join(' ');
+    }
+
     protected function toChildBlocks(Collection $blocks): Collection
     {
         return collect($blocks)->map(function (BasicBlock $block) {

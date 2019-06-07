@@ -72,12 +72,7 @@ $coffees = collect([
                                     <?= $row->tasting_notes ?><br />
                                 <?php endif; ?>
                             <hr>
-                                <?= $row
-                                    ->getChildren()
-                                    ->map(function (\Notion\Entities\Blocks\BasicBlock $block) {
-                                        return $block->getTitle();
-                                    })
-                                    ->join(' ') ?>
+                                <?= $row->getContents() ?>
                             </p>
                         </div>
                     </div>
