@@ -12,9 +12,7 @@ require '../vendor/autoload.php';
 /** @var CollectionViewBlock $todoPage */
 $client = new NotionClient(getenv('NOTION_TOKEN'));
 $todoPage = $client
-    ->getBlock(
-        'https://www.notion.so/anahkiasen/3d13a98be599441485953749b4dbc8ad?v=f3c354c0549e4589adf10d7eff46a512'
-    )
+    ->getBlock('https://www.notion.so/anahkiasen/3d13a98be599441485953749b4dbc8ad?v=f3c354c0549e4589adf10d7eff46a512')
     ->getCollection();
 
 /** @var Collection|CollectionRowBlock[] $todos */
@@ -23,9 +21,7 @@ $todos = $todoPage->getRows()->sortBy(function (CollectionRowBlock $child) {
 });
 
 $routinePage = $client
-    ->getBlock(
-        'https://www.notion.so/anahkiasen/764e98e89e1b4b2da097fb5705ebd518?v=98149a197e31481099deb7143012336e'
-    )
+    ->getBlock('https://www.notion.so/anahkiasen/764e98e89e1b4b2da097fb5705ebd518?v=98149a197e31481099deb7143012336e')
     ->getCollection();
 ?>
 <!doctype html>

@@ -26,7 +26,7 @@
         }
     },
     "scripts": {
-        "lint": "prettier --write '{src,examples}/**/*' --print-width 100 --single-quote && php-cs-fixer fix -v",
+        "lint": "prettier --write '{src,examples}/**/*' --print-width 120 --single-quote && php-cs-fixer fix -v",
         "test": "phpunit"
     },
     "config": {

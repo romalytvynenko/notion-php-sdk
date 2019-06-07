@@ -71,9 +71,7 @@ class NotionClient
     public function getCollection(string $identifier): CollectionBlock
     {
         $collectionId = Identifier::fromString($identifier);
-        $attributes = $this->getRecordValues(new RecordRequest('collection', $collectionId))[
-            'value'
-        ];
+        $attributes = $this->getRecordValues(new RecordRequest('collection', $collectionId))['value'];
 
         $collection = new CollectionBlock($collectionId, []);
         $collection->setAttributes($attributes);
@@ -121,18 +119,14 @@ class NotionClient
 
     public function getByParent(UuidInterface $getId, string $query = '')
     {
-        $response = $this->cachedJsonRequest(
-            'by-parent-'.$getId->toString(),
-            'searchPagesWithParent',
-            [
-                'query' => $query,
-                'parentId' => $getId->toString(),
-                'limit' => 10000,
-                'spaceId' => $this->getCurrentSpace()
-                    ->getId()
-                    ->toString(),
-            ]
-        );
+        $response = $this->cachedJsonRequest('by-parent-'.$getId->toString(), 'searchPagesWithParent', [
+            'query' => $query,
+            'parentId' => $getId->toString(),
+            'limit' => 10000,
+            'spaceId' => $this->getCurrentSpace()
+                ->getId()
+                ->toString(),
+        ]);
 
         return $response['recordMap'] ?? [];
     }

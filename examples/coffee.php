@@ -47,9 +47,7 @@ $coffees = collect([
                 <hr>
                 <?php foreach ($rows as $key => $row): ?>
                     <?= $key === 1 ? '<div class="collapse" id="older' . $location . '">' : '' ?>
-                    <div class="card mb-2 <?php if (
-                        $key === 0
-                    ): ?>text-white bg-primary<?php endif; ?>">
+                    <div class="card mb-2 <?php if ($key === 0): ?>text-white bg-primary<?php endif; ?>">
                         <div class="card-body">
                             <h5 class="card-title">
                                 <?= $row->getIcon() ?>
@@ -68,9 +66,7 @@ $coffees = collect([
                             <?php endif; ?>
                             <p class="card-text">
                                 <strong>Roaster:</strong> <?= $row->roaster ?><br />
-                                <strong>On Machine Since:</strong> <?= $row->on_machine_since->format(
-                                    'Y-m-d'
-                                ) ?><br />
+                                <strong>On Machine Since:</strong> <?= $row->on_machine_since->format('Y-m-d') ?><br />
                                 <?php if ($row->tasting_notes): ?>
                                     <strong>Tasting Notes:</strong><br />
                                     <?= $row->tasting_notes ?><br />
