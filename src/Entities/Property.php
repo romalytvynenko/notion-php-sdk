@@ -40,7 +40,15 @@ class Property
 
     public function getValue()
     {
-        return $this->value;
+        $type = $this->schema['type'] ?? '';
+        switch ($type) {
+            case 'multi_select':
+            case 'select':
+            case 'text':
+                return trim($this->value);
+            default:
+                return $this->value;
+        }
     }
 
     public function setValue($value): void

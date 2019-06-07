@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Collection;
 use Notion\Entities\Blocks\CollectionRowBlock;
 use Notion\Entities\Blocks\CollectionViewBlock;
 use Notion\NotionClient;
@@ -16,14 +17,16 @@ $todoPage = $client
     )
     ->getCollection();
 
-/** @var CollectionRowBlock[] $rows */
-$rows = $todoPage->getRows()->sortBy(function (CollectionRowBlock $child) {
+/** @var Collection|CollectionRowBlock[] $todos */
+$todos = $todoPage->getRows()->sortBy(function (CollectionRowBlock $child) {
     return $child->getProperty('Done')->getValue();
 });
 
-$routinePage = $client->getBlock(
-    'https://www.notion.so/anahkiasen/764e98e89e1b4b2da097fb5705ebd518?v=98149a197e31481099deb7143012336e'
-)->getCollection();
+$routinePage = $client
+    ->getBlock(
+        'https://www.notion.so/anahkiasen/764e98e89e1b4b2da097fb5705ebd518?v=98149a197e31481099deb7143012336e'
+    )
+    ->getCollection();
 ?>
 <!doctype html>
 <html lang="en">
@@ -38,13 +41,11 @@ $routinePage = $client->getBlock(
 <body style="padding: 2rem">
 <h1><?= $routinePage->getTitle() ?></h1>
 <ul>
-    <?php echo $routinePage
-        ->getRows()
-        ->map(function (CollectionRowBlock $block) {
-            ?>
+    <?php echo $routinePage->getRows()->map(function (CollectionRowBlock $block) {
+        ?>
         <li><strong> <?= $block->hour ?>:</strong> <?= $block->name ?></li>
         <?php
-        }); ?>
+    }); ?>
 </ul>
 <h1><?= $todoPage->getTitle() ?></h1>
 <h2><?= $todoPage->getDescription() ?></h2>
@@ -59,7 +60,7 @@ $routinePage = $client->getBlock(
         <td>Done</td>
     </tr>
     </thead>
-    <?php foreach ($rows as $child): ?>
+    <?php foreach ($todos as $child): ?>
         <tr>
             <td><?= $child->getId()->toString() ?></td>
             <td><?= $child->getTitle() ?></td>
@@ -72,9 +73,7 @@ $routinePage = $client->getBlock(
             <td><?= $child->tags ?></td>
             <td>
                 <div class="custom-control custom-checkbox">
-                    <?php if (
-                        $child->getProperty('Done')->getValue() === 'Yes'
-                    ): ?>
+                    <?php if ($child->getProperty('Done')->getValue() === 'Yes'): ?>
                         <input type="checkbox" class="custom-control-input" name="done" checked>
                     <?php else: ?>
                         <input type="checkbox" class="custom-control-input" name="done">

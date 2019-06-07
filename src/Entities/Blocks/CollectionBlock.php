@@ -22,10 +22,7 @@ class CollectionBlock extends BasicBlock
         return collect($pages['block'])
             ->keys()
             ->map(function ($id) use ($pages) {
-                $block = (new BasicBlock(
-                    Identifier::fromString($id),
-                    $pages
-                ))->toTypedBlock();
+                $block = (new BasicBlock(Identifier::fromString($id), $pages))->toTypedBlock();
 
                 $block->setClient($this->getClient());
                 $block->createPropertiesFromSchemas($this->get('schema'));

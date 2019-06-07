@@ -19,15 +19,14 @@ class BasicBlock extends Entity implements BlockInterface
     public function __construct(UuidInterface $id, $recordMap)
     {
         parent::__construct($id, $recordMap);
-        $this->attributes = Arr::get(
-            $this->recordMap,
-            'block.'.$this->id->toString().'.value'
-        );
+        $this->attributes = Arr::get($this->recordMap, 'block.'.$this->id->toString().'.value');
     }
 
     public function __get($name)
     {
-        return $this->getProperty($name);
+        $property = $this->getProperty($name);
+
+        return $property ? $property->getValue() : null;
     }
 
     public function __set($name, $value): void
@@ -48,9 +47,7 @@ class BasicBlock extends Entity implements BlockInterface
             $this->get('parent_table') === 'collection'
                 ? CollectionRowBlock::class
                 : $types[$this->get('type')] ?? null;
-        $block = $blockType
-            ? new $blockType($this->getId(), $this->getRecordMap())
-            : $this;
+        $block = $blockType ? new $blockType($this->getId(), $this->getRecordMap()) : $this;
 
         if ($this->client) {
             $block->setClient($this->client);
@@ -109,9 +106,7 @@ class BasicBlock extends Entity implements BlockInterface
     {
         $this->setProperties(
             collect($schemas)->mapWithKeys(function ($schema, $hash) {
-                $property = $this->unwrapValue(
-                    $this->get('properties.'.$hash) ?? []
-                );
+                $property = $this->unwrapValue($this->get('properties.'.$hash) ?? []);
                 $name = $schema['name'] ?? '';
 
                 return [$name => new Property($schema, $property)];
@@ -121,12 +116,8 @@ class BasicBlock extends Entity implements BlockInterface
 
     public function getProperty(string $needle)
     {
-        return $this->properties->first(function (
-            Property $property,
-            $key
-        ) use ($needle) {
-            return $key === $needle ||
-                Str::slug($property->getName()) === $needle;
+        return $this->properties->first(function (Property $property, $key) use ($needle) {
+            return $key === $needle || Str::slug($property->getName()) === $needle || Str::snake($property->getName()) === $needle;
         });
     }
 
@@ -148,5 +139,10 @@ class BasicBlock extends Entity implements BlockInterface
     protected function unwrapValue(array $property)
     {
         return Arr::first(Arr::flatten($property)) ?? '';
+    }
+
+    public function getCollection(): ?CollectionBlock
+    {
+        return null;
     }
 }
