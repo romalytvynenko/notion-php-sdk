@@ -61,6 +61,11 @@ class BasicBlock extends Entity implements BlockInterface
         return $this->getProperty('title');
     }
 
+    public function getIcon(): string
+    {
+        return $this->get('format.page_icon');
+    }
+
     public function getDescription(): string
     {
         return $this->getTextAttribute('description');

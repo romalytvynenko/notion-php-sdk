@@ -45,6 +45,7 @@ $coffees = collect([
                     <div class="card mb-2">
                         <div class="card-body">
                             <h5 class="card-title">
+                                <?= $row->getIcon() ?>
                                 <?= $row->name ?>
                             </h5>
                             <?php if ($row->country || $row->region): ?>
