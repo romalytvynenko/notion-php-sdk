@@ -1,5 +1,6 @@
 {
-    "name": "anahkiasen/notion-php-sdk",
+    "name": "madewithlove/notion-php-sdk",
+    "description": "An unofficial PHP SDK for Notion",
     "license": "MIT",
     "require": {
         "ext-json": "*",

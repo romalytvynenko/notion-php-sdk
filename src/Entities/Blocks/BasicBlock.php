@@ -58,7 +58,7 @@ class BasicBlock extends Entity implements BlockInterface
 
     public function getTitle(): string
     {
-        return $this->getProperty('title');
+        return (string) $this->getProperty('title');
     }
 
     public function getIcon(): string
@@ -107,16 +107,24 @@ class BasicBlock extends Entity implements BlockInterface
         $this->properties = $properties;
     }
 
-    public function createPropertiesFromSchemas(array $schemas): void
+    public function createProperties(array $schemas = []): void
     {
-        $this->setProperties(
-            collect($schemas)->mapWithKeys(function ($schema, $hash) {
-                $property = $this->unwrapValue($this->get('properties.'.$hash) ?? []);
-                $name = $schema['name'] ?? '';
+        if ($schemas) {
+            $this->setProperties(
+                collect($schemas)->mapWithKeys(function ($schema, $hash) {
+                    $property = $this->unwrapValue($this->get('properties.'.$hash) ?? []);
+                    $name = $schema['name'] ?? '';
 
-                return [$name => new Property($schema, $property)];
-            })
-        );
+                    return [$name => new Property($schema, $property)];
+                })
+            );
+        } else {
+            $this->setProperties(
+                collect($this->get('properties'))->map(function ($property) {
+                    return new Property([], $this->unwrapValue($property));
+                })
+            );
+        }
     }
 
     public function getProperty(string $needle)
@@ -151,5 +159,24 @@ class BasicBlock extends Entity implements BlockInterface
     public function getCollection(): ?CollectionBlock
     {
         return null;
+    }
+
+    public function getChildren(): Collection
+    {
+        return $this->toChildBlocks(
+            collect($this->get('content'))->map(function (string $id) {
+                return $this->client->getBlock($id);
+            })
+        );
+    }
+
+    protected function toChildBlocks(Collection $blocks): Collection
+    {
+        return collect($blocks)->map(function (BasicBlock $block) {
+            $block->setClient($this->getClient());
+            $block->createProperties($this->get('schema') ?? []);
+
+            return $block;
+        });
     }
 }

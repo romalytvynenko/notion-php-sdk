@@ -18,19 +18,14 @@ class CollectionBlock extends BasicBlock
     public function getRows(string $query = ''): Collection
     {
         $pages = $this->getClient()->getByParent($this->getId(), $query);
-
-        return collect($pages['block'])
+        $children = collect($pages['block'])
             ->keys()
             ->map(function ($id) use ($pages) {
-                $block = (new BasicBlock(Identifier::fromString($id), $pages))->toTypedBlock();
-
-                $block->setClient($this->getClient());
-                $block->createPropertiesFromSchemas($this->get('schema'));
-
-                return $block;
-            })
-            ->filter(function (BlockInterface $block) {
-                return $block instanceof CollectionRowBlock;
+                return (new BasicBlock(Identifier::fromString($id), $pages))->toTypedBlock();
             });
+
+        return $this->toChildBlocks($children)->filter(function (BlockInterface $block) {
+            return $block instanceof CollectionRowBlock;
+        });
     }
 }
