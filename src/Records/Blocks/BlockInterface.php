@@ -1,6 +1,6 @@
 <?php
 
-namespace Notion\Entities\Blocks;
+namespace Notion\Records\Blocks;
 
 use Illuminate\Support\Collection;
 use Ramsey\Uuid\UuidInterface;

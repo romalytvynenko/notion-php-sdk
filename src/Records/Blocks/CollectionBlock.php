@@ -1,9 +1,9 @@
 <?php
 
-namespace Notion\Entities\Blocks;
+namespace Notion\Records\Blocks;
 
 use Illuminate\Support\Collection;
-use Notion\Entities\Identifier;
+use Notion\Records\Identifier;
 
 class CollectionBlock extends BasicBlock
 {

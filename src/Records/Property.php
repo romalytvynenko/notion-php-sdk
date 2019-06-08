@@ -1,6 +1,6 @@
 <?php
 
-namespace Notion\Entities;
+namespace Notion\Records;
 
 use DateTime;
 use Illuminate\Support\Arr;

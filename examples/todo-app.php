@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Collection;
-use Notion\Entities\Blocks\CollectionRowBlock;
-use Notion\Entities\Blocks\CollectionViewBlock;
+use Notion\Records\Blocks\CollectionRowBlock;
+use Notion\Records\Blocks\CollectionViewBlock;
 use Notion\NotionClient;
 use Symfony\Component\Dotenv\Dotenv;
 

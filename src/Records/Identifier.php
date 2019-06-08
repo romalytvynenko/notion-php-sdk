@@ -1,6 +1,6 @@
 <?php
 
-namespace Notion\Entities;
+namespace Notion\Records;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

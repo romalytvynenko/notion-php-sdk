@@ -5,12 +5,13 @@ namespace Notion;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Support\Arr;
-use Notion\Entities\Blocks\BasicBlock;
-use Notion\Entities\Blocks\BlockInterface;
-use Notion\Entities\Blocks\CollectionBlock;
-use Notion\Entities\Identifier;
-use Notion\Entities\Space;
-use Notion\Entities\User;
+use Notion\Records\Blocks\BasicBlock;
+use Notion\Records\Blocks\BlockInterface;
+use Notion\Records\Blocks\CollectionBlock;
+use Notion\Records\Identifier;
+use Notion\Records\Record;
+use Notion\Records\Space;
+use Notion\Records\User;
 use Notion\Requests\BuildOperation;
 use Notion\Requests\RecordRequest;
 use Psr\SimpleCache\CacheInterface;
@@ -151,14 +152,15 @@ class NotionClient
     private function loadUserInformations(): void
     {
         $response = $this->cachedJsonRequest('user-informations', 'loadUserContent');
+        $fromRecordMap = static function (string $class, string $key, array $response): Record {
+            $currentSpace = $response['recordMap'][$key];
+            $currentSpace = Arr::first($currentSpace)['value'];
 
-        $currentSpace = $response['recordMap']['space'];
-        $currentSpace = Arr::first($currentSpace)['value'];
-        $this->currentSpace = new Space(Identifier::fromString($currentSpace['id']), $currentSpace);
+            return new $class(Identifier::fromString($currentSpace['id']), $currentSpace);
+        };
 
-        $currentUser = $response['recordMap']['notion_user'];
-        $currentUser = Arr::first($currentUser)['value'];
-        $this->currentUser = new User(Identifier::fromString($currentUser['id']), $currentUser);
+        $this->currentSpace = $fromRecordMap(Space::class, 'space', $response);
+        $this->currentUser = $fromRecordMap(User::class, 'notion_user', $response);
     }
 
     private function cachedJsonRequest(string $key, string $url, array $body = [])

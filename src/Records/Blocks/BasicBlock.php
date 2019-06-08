@@ -1,12 +1,12 @@
 <?php
 
-namespace Notion\Entities\Blocks;
+namespace Notion\Records\Blocks;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Notion\Entities\Property;
-use Notion\Entities\Record;
+use Notion\Records\Property;
+use Notion\Records\Record;
 use Notion\Requests\BuildOperation;
 use Ramsey\Uuid\UuidInterface;
 

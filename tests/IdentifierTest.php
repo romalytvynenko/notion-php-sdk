@@ -1,6 +1,6 @@
 <?php
 
-use Notion\Entities\Identifier;
+use Notion\Records\Identifier;
 
 class IdentifierTest extends \PHPUnit\Framework\TestCase
 {
