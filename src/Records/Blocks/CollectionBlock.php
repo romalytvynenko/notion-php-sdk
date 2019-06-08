@@ -28,7 +28,7 @@ class CollectionBlock extends BasicBlock
         return $block;
     }
 
-    public function getRow($uuid)
+    public function getRow($uuid): ?CollectionRowBlock
     {
         $uuid = Identifier::fromString($uuid);
 
