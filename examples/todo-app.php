@@ -20,9 +20,9 @@ $todos = $todoPage->getRows()->sortBy(function (CollectionRowBlock $child) {
     return $child->done;
 });
 
-$routinePage = $client
-    ->getBlock('https://www.notion.so/anahkiasen/764e98e89e1b4b2da097fb5705ebd518?v=98149a197e31481099deb7143012336e')
-    ->getCollection();
+if ($title = $_POST['title'] ?? '') {
+    $todoPage->addRow(['title' => $title]);
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -35,17 +35,16 @@ $routinePage = $client
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/minty/bootstrap.min.css">
 </head>
 <body style="padding: 2rem">
-<h1><?= $routinePage->title ?></h1>
-<ul>
-    <?php echo $routinePage->getRows()->map(function (CollectionRowBlock $block) {
-        ?>
-        <li><strong> <?= $block->hour ?>:</strong> <?= $block->name ?></li>
-        <?php
-    }); ?>
-</ul>
 <h1><?= $todoPage->title ?></h1>
 <h2><?= $todoPage->description ?></h2>
-<table class="table table-striped table-hover">
+<form method="POST">
+    <div class="form-group">
+        <label for="title">Task</label>
+        <input id="title" name="title" type="text" class="form-control" placeholder="Do something">
+    </div>
+    <button type="submit" class="btn btn-primary">Add task</button>
+</form>
+<table class="table table-striped table-hover mt-3">
     <thead>
     <tr>
         <td>ID</td>

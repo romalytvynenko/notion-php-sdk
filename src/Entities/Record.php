@@ -3,11 +3,13 @@
 namespace Notion\Entities;
 
 use Illuminate\Support\Arr;
-use Notion\NotionClient;
+use Notion\ClientAware;
 use Ramsey\Uuid\UuidInterface;
 
-class Entity
+class Record
 {
+    use ClientAware;
+
     /**
      * @var UuidInterface
      */
@@ -22,11 +24,6 @@ class Entity
      * @var array
      */
     protected $attributes;
-
-    /**
-     * @var NotionClient
-     */
-    protected $client;
 
     public function __construct(UuidInterface $id, $recordMap)
     {
@@ -63,16 +60,6 @@ class Entity
     public function setRecordMap(array $recordMap): void
     {
         $this->recordMap = $recordMap;
-    }
-
-    public function getClient(): NotionClient
-    {
-        return $this->client;
-    }
-
-    public function setClient(NotionClient $client): void
-    {
-        $this->client = $client;
     }
 
     public function getAttributes(): array

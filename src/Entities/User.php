@@ -2,6 +2,6 @@
 
 namespace Notion\Entities;
 
-class Space extends Record
+class User extends Record
 {
 }

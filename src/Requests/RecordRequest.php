@@ -1,6 +1,6 @@
 <?php
 
-namespace Notion;
+namespace Notion\Requests;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Ramsey\Uuid\UuidInterface;

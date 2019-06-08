@@ -12,8 +12,19 @@ class CollectionBlock extends BasicBlock
         return $this->getTextAttribute('name') ?: parent::getTitle();
     }
 
+    public function getTable(): string
+    {
+        return 'collection';
+    }
+
+    public function addRow(array $attributes)
+    {
+        $blockId = $this->getClient()->createRecord('block', $this, ['type' => PageBlock::BLOCK_TYPE]);
+        $block = $this->getClient()->getBlock($blockId->toString());
+    }
+
     /**
-     * @return CollectionRowBlock[]
+     * @return Collection|CollectionRowBlock[]
      */
     public function getRows(string $query = ''): Collection
     {

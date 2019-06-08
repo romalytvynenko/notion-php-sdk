@@ -10,7 +10,11 @@ use Notion\Entities\Blocks\BlockInterface;
 use Notion\Entities\Blocks\CollectionBlock;
 use Notion\Entities\Identifier;
 use Notion\Entities\Space;
+use Notion\Entities\User;
+use Notion\Requests\BuildOperation;
+use Notion\Requests\RecordRequest;
 use Psr\SimpleCache\CacheInterface;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
@@ -35,6 +39,11 @@ class NotionClient
      * @var Space
      */
     protected $currentSpace;
+
+    /**
+     * @var User
+     */
+    protected $currentUser;
 
     public function __construct(string $token, Configuration $config = null)
     {
@@ -129,9 +138,14 @@ class NotionClient
         return $response['recordMap'] ?? [];
     }
 
-    private function getCurrentSpace(): Space
+    public function getCurrentSpace(): Space
     {
         return $this->currentSpace;
+    }
+
+    public function getCurrentUser(): User
+    {
+        return $this->currentUser;
     }
 
     private function loadUserInformations(): void
@@ -141,6 +155,10 @@ class NotionClient
         $currentSpace = $response['recordMap']['space'];
         $currentSpace = Arr::first($currentSpace)['value'];
         $this->currentSpace = new Space(Identifier::fromString($currentSpace['id']), $currentSpace);
+
+        $currentUser = $response['recordMap']['notion_user'];
+        $currentUser = Arr::first($currentUser)['value'];
+        $this->currentUser = new User(Identifier::fromString($currentUser['id']), $currentUser);
     }
 
     private function cachedJsonRequest(string $key, string $url, array $body = [])
@@ -152,5 +170,49 @@ class NotionClient
 
             return json_decode($response, true);
         });
+    }
+
+    public function createRecord(
+        string $table,
+        BlockInterface $parent,
+        array $attributes,
+        array $children = []
+    ): UuidInterface {
+
+        //$parent = $parent->getParent();
+        $uuid = Uuid::uuid4();
+        $operation = new BuildOperation(
+            $uuid,
+            [],
+            array_merge([
+                'id' => $uuid->toString(),
+                'version' => 1,
+                'alive' => true,
+                'created_by' => $this->getCurrentUser()
+                    ->getId()
+                    ->toString(),
+                'created_time' => time(),
+                'parent_id' => $parent->getId()->toString(),
+                'parent_table' => $parent->getTable(),
+            ], $attributes),
+            'set',
+            $table
+        );
+
+        $this->submitTransation([$operation]);
+
+        return $uuid;
+    }
+
+    /**
+     * @param BuildOperation[] $operations
+     */
+    private function submitTransation(array $operations): void
+    {
+        $operations = collect($operations);
+
+        $this->client->post('submitTransaction', [
+            'json' => ['operations' => $operations->toArray()],
+        ]);
     }
 }

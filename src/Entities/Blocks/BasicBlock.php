@@ -5,8 +5,8 @@ namespace Notion\Entities\Blocks;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Notion\Entities\Entity;
 use Notion\Entities\Property;
+use Notion\Entities\Record;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -14,8 +14,15 @@ use Ramsey\Uuid\UuidInterface;
  * @property string title
  * @property string description
  */
-class BasicBlock extends Entity implements BlockInterface
+class BasicBlock extends Record implements BlockInterface
 {
+    public const BLOCK_TYPE = 'block';
+
+    /**
+     * @var BlockInterface
+     */
+    protected $parent;
+
     /**
      * @var Collection|Property[]
      */
@@ -24,7 +31,7 @@ class BasicBlock extends Entity implements BlockInterface
     public function __construct(UuidInterface $id, $recordMap)
     {
         parent::__construct($id, $recordMap);
-        $this->attributes = Arr::get($this->recordMap, 'block.'.$this->id->toString().'.value');
+        $this->attributes = Arr::get($this->recordMap, 'block.'.$this->id.'.value');
     }
 
     public function __get($name)
@@ -76,6 +83,11 @@ class BasicBlock extends Entity implements BlockInterface
     public function getTitle(): string
     {
         return (string) $this->getProperty('title');
+    }
+
+    public function getTable(): string
+    {
+        return 'block';
     }
 
     public function getIcon(): string
