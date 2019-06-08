@@ -3,13 +3,10 @@
 use Notion\Records\Blocks\CollectionRowBlock;
 use Notion\Records\Blocks\CollectionViewBlock;
 use Notion\NotionClient;
-use Symfony\Component\Dotenv\Dotenv;
 
-require '../vendor/autoload.php';
-(new Dotenv())->load(__DIR__ . '/../.env');
+require './_bootstrap.php';
 
 $client = new NotionClient(getenv('MADEWITHLOVE_NOTION_TOKEN'));
-
 $coffees = collect([
     'Ghent' => 'a61eb783a20940b59652fbdedb9a0292?v=c99913c2de5548af8c56c2337406fbe4',
     'Leuven' => '602c2098ceac4816bf5a27ce5f2d237d?v=702bd45ffc1c4c378c6f91d6e90a36a5'
@@ -50,7 +47,7 @@ $coffees = collect([
                     <div class="card mb-2 <?php if ($key === 0): ?>text-white bg-primary<?php endif; ?>">
                         <div class="card-body">
                             <h5 class="card-title">
-                                <?= $row->getIcon() ?>
+                                <?= $row->icon ?>
                                 <?= $row->name ?>
                             </h5>
                             <?php if ($row->country || $row->region): ?>

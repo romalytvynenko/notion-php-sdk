@@ -5,6 +5,7 @@ namespace Notion\Records\Blocks;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use League\CommonMark\CommonMarkConverter;
 use Notion\Records\Property;
 use Notion\Records\Record;
 use Notion\Requests\BuildOperation;
@@ -29,6 +30,11 @@ class BasicBlock extends Record implements BlockInterface
      */
     protected $properties;
 
+    /**
+     * @var string
+     */
+    protected $format;
+
     public function __construct(UuidInterface $id, $recordMap)
     {
         parent::__construct($id, $recordMap);
@@ -41,11 +47,11 @@ class BasicBlock extends Record implements BlockInterface
             case 'id':
                 return $this->getId()->toString();
 
+            case 'contents':
+            case 'icon':
             case 'description':
-                return $this->getDescription();
-
             case 'title':
-                return $this->getTitle();
+                return $this->{'get'.ucfirst($name)}();
 
             default:
                 $property = $this->getProperty($name);
@@ -59,15 +65,23 @@ class BasicBlock extends Record implements BlockInterface
         $this->setProperty($name, $value);
     }
 
+    protected function getBlockTypes()
+    {
+        return [
+            'collection_view_page' => CollectionViewBlock::class,
+            BasicBlock::BLOCK_TYPE => BasicBlock::class,
+            CollectionBlock::BLOCK_TYPE => CollectionBlock::class,
+            CollectionViewBlock::BLOCK_TYPE => CollectionViewBlock::class,
+            PageBlock::BLOCK_TYPE => PageBlock::class,
+            CodeBlock::BLOCK_TYPE => CodeBlock::class,
+            SubHeaderBlock::BLOCK_TYPE => SubHeaderBlock::class,
+            NumberedListBlock::BLOCK_TYPE => NumberedListBlock::class,
+        ];
+    }
+
     public function toTypedBlock(): BasicBlock
     {
-        $types = [
-            'page' => PageBlock::class,
-            'collection' => CollectionBlock::class,
-            'collection_view' => CollectionViewBlock::class,
-            'collection_view_page' => CollectionViewBlock::class,
-        ];
-
+        $types = $this->getBlockTypes();
         $blockType =
             $this->get('parent_table') === 'collection'
                 ? CollectionRowBlock::class
@@ -89,6 +103,16 @@ class BasicBlock extends Record implements BlockInterface
     public function getTable(): string
     {
         return 'block';
+    }
+
+    public function getFormat(): string
+    {
+        return $this->format;
+    }
+
+    public function setFormat(string $format): void
+    {
+        $this->format = $format;
     }
 
     public function getIcon(): string
@@ -198,7 +222,7 @@ class BasicBlock extends Record implements BlockInterface
      */
     protected function unwrapValue(array $property)
     {
-        return Arr::last(Arr::flatten($property)) ?? '';
+        return implode(Arr::flatten($property)) ?? '';
     }
 
     public function getCollection(): ?CollectionBlock
@@ -219,7 +243,7 @@ class BasicBlock extends Record implements BlockInterface
     {
         return $this->getChildren()
             ->map(function (BasicBlock $block) {
-                return $block->getTitle();
+                return $block->toString();
             })
             ->join(' ');
     }
@@ -232,5 +256,22 @@ class BasicBlock extends Record implements BlockInterface
 
             return $block;
         });
+    }
+
+    public function toString()
+    {
+        return $this->getTitle().PHP_EOL;
+    }
+
+    public function toHtml()
+    {
+        $converter = new CommonMarkConverter();
+
+        return $converter->convertToHtml($this->getContents());
+    }
+
+    public function __toString()
+    {
+        return $this->toString();
     }
 }

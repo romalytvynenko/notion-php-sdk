@@ -73,6 +73,14 @@ class NotionClient
         $block = (new BasicBlock($blockId, $attributes))->toTypedBlock();
         $block->setClient($this);
 
+        if ($block->get('parent_table') === 'collection' && $block->get('properties')) {
+            $schema = $block->getParent()->get('schema');
+            if (!$schema) {
+                dd($block, $block->getParent());
+            }
+            $block->createProperties($schema);
+        }
+
         return $block;
     }
 
@@ -217,5 +225,9 @@ class NotionClient
         $this->client->post('submitTransaction', [
             'json' => ['operations' => $operations->toArray()],
         ]);
+    }
+
+    public function getSpace($parentId): void
+    {
     }
 }

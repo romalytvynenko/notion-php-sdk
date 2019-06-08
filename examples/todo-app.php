@@ -4,10 +4,8 @@ use Illuminate\Support\Collection;
 use Notion\Records\Blocks\CollectionRowBlock;
 use Notion\Records\Blocks\CollectionViewBlock;
 use Notion\NotionClient;
-use Symfony\Component\Dotenv\Dotenv;
 
-require '../vendor/autoload.php';
-(new Dotenv())->load(__DIR__ . '/../.env');
+require './_bootstrap.php';
 
 /** @var CollectionViewBlock $todoPage */
 $client = new NotionClient(getenv('NOTION_TOKEN'));

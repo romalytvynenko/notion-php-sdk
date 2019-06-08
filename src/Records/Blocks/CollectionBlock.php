@@ -7,6 +7,8 @@ use Notion\Records\Identifier;
 
 class CollectionBlock extends BasicBlock
 {
+    const BLOCK_TYPE = 'collection';
+
     public function getTitle(): string
     {
         return $this->getTextAttribute('name') ?: parent::getTitle();
@@ -42,11 +44,11 @@ class CollectionBlock extends BasicBlock
      */
     public function getRows(string $query = ''): Collection
     {
-        $pages = $this->getClient()->getByParent($this->getId(), $query);
-        $children = collect($pages['block'])
+        $response = $this->getClient()->getByParent($this->getId(), $query);
+        $children = collect($response['block'])
             ->keys()
-            ->map(function ($id) use ($pages) {
-                return (new BasicBlock(Identifier::fromString($id), $pages))->toTypedBlock();
+            ->map(function ($id) use ($response) {
+                return (new BasicBlock(Identifier::fromString($id), $response))->toTypedBlock();
             });
 
         return $this->toChildBlocks($children)->filter(function (BlockInterface $block) {
