@@ -17,9 +17,9 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 class NotionClient
 {
     /**
-     * @var string
+     * @var Configuration
      */
-    protected $token;
+    protected $config;
 
     /**
      * @var Client
@@ -36,22 +36,21 @@ class NotionClient
      */
     protected $currentSpace;
 
-    public function __construct(string $token)
+    public function __construct(string $token, Configuration $config = null)
     {
-        $cookies = CookieJar::fromArray(
-            [
-                'token_v2' => $token,
-            ],
-            'www.notion.so'
-        );
+        $this->config = $config ?? new Configuration();
+        $this->config->setToken($token);
 
-        $this->token = $token;
-        $this->cache = new FilesystemAdapter();
-        //$this->cache->clear();
-
+        $this->cache = new FilesystemAdapter('', $this->config->getCacheLifetime());
+        $this->cache->clear();
         $this->client = new Client([
-            'base_uri' => getenv('API_BASE_URL'),
-            'cookies' => $cookies,
+            'base_uri' => $this->config->getApiBaseUrl(),
+            'cookies' => CookieJar::fromArray(
+                [
+                    'token_v2' => $this->config->getToken(),
+                ],
+                'www.notion.so'
+            ),
         ]);
 
         $this->loadUserInformations();
@@ -148,13 +147,8 @@ class NotionClient
     private function cachedJsonRequest(string $key, string $url, array $body = [])
     {
         return $this->cache->get($key, function () use ($url, $body) {
-            $response = $this->client->post($url, [
-                'headers' => [
-                    'Content-Type' => 'application/json; charset=utf-8',
-                ],
-                'body' => $body === [] ? '{}' : json_encode($body),
-            ]);
-
+            $options = $body ? ['json' => $body] : [];
+            $response = $this->client->post($url, $options);
             $response = $response->getBody()->getContents();
 
             return json_decode($response, true);
