@@ -26,7 +26,17 @@ class Property
 
     public function getName()
     {
-        return $this->getSchema()['name'] ?? '';
+        return $this->getSchema()['name'] ?? null;
+    }
+
+    public function getHash()
+    {
+        return $this->getSchema()['hash'] ?? null;
+    }
+
+    public function getPath(): array
+    {
+        return ['properties', $this->getHash() ?? $this->getName()];
     }
 
     public function getSchema(): array
@@ -34,15 +44,14 @@ class Property
         return $this->schema;
     }
 
-    public function setSchema(array $schema): void
+    public function getRawValue()
     {
-        $this->schema = $schema;
+        return $this->value;
     }
 
     public function getValue()
     {
-        $type = $this->schema['type'] ?? '';
-        switch ($type) {
+        switch ($this->getType()) {
             case 'checkbox':
                 return $this->value === 'Yes';
 
@@ -61,12 +70,19 @@ class Property
 
     public function setValue($value): void
     {
-        $this->value = $value;
+        switch ($this->getType()) {
+            case 'checkbox':
+                $this->value = $value ? 'Yes' : '';
+                break;
+            default:
+                $this->value = $value;
+                break;
+        }
     }
 
     public function __toString()
     {
-        return $this->getValue();
+        return (string) $this->getValue();
     }
 
     protected function getOptions(): Collection
@@ -84,5 +100,13 @@ class Property
     public function getOptionAttribute(string $key)
     {
         return Arr::get($this->getOption(), $key);
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getType()
+    {
+        return $this->schema['type'] ?? 'text';
     }
 }

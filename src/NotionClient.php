@@ -180,7 +180,6 @@ class NotionClient
         array $attributes,
         array $children = []
     ): UuidInterface {
-        //$parent = $parent->getParent();
         $uuid = Uuid::uuid4();
         $operation = new BuildOperation(
             $uuid,

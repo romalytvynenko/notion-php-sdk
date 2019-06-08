@@ -28,6 +28,15 @@ class CollectionBlock extends BasicBlock
         return $block;
     }
 
+    public function getRow($uuid)
+    {
+        $uuid = Identifier::fromString($uuid);
+
+        return $this->getRows()->first(function (CollectionRowBlock $row) use ($uuid) {
+            return $row->getId()->toString() === $uuid->toString();
+        });
+    }
+
     /**
      * @return Collection|CollectionRowBlock[]
      */

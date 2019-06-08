@@ -142,6 +142,7 @@ class BasicBlock extends Record implements BlockInterface
         if ($schemas) {
             $this->setProperties(
                 collect($schemas)->mapWithKeys(function ($schema, $hash) {
+                    $schema['hash'] = $hash;
                     $property = $this->unwrapValue($this->get('properties.'.$hash) ?? []);
                     $name = $schema['name'] ?? '';
 
@@ -157,7 +158,7 @@ class BasicBlock extends Record implements BlockInterface
         }
     }
 
-    public function getProperty(string $needle)
+    public function getProperty(string $needle): ?Property
     {
         return $this->properties->first(function (Property $property, $key) use ($needle) {
             return $key === $needle ||
@@ -166,13 +167,23 @@ class BasicBlock extends Record implements BlockInterface
         });
     }
 
-    public function setProperty(string $key, $value)
+    public function setProperty(string $key, $value): void
     {
-        $operation = new BuildOperation($this->getId(), ['properties', $key], [[$value]], 'set', $this->getTable());
+        $property = $this->getProperty($key);
+        if (!$property) {
+            return;
+        }
+
+        $property->setValue($value);
+        $operation = new BuildOperation(
+            $this->getId(),
+            $property->getPath(),
+            [[$property->getRawValue()]],
+            'set',
+            $this->getTable()
+        );
 
         $this->getClient()->submitTransation([$operation]);
-
-        return $this->properties[$key] = $value;
     }
 
     protected function getTextAttribute(string $propertyName): string

@@ -22,6 +22,9 @@ $todos = $todoPage->getRows()->sortBy(function (CollectionRowBlock $child) {
 
 if ($title = $_POST['title'] ?? '') {
     $block = $todoPage->addRow(['title' => $title]);
+} elseif ($id = $_GET['mark_as_done'] ?? null) {
+    $row = $todoPage->getRow($id);
+    $row->done = true;
 }
 ?>
 <!doctype html>
@@ -68,12 +71,15 @@ if ($title = $_POST['title'] ?? '') {
             <td><?= $child->tags ?></td>
             <td>
                 <div class="custom-control custom-checkbox">
+                    <a href="?mark_as_done=<?= $child->id ?>">
                     <?php if ($child->done): ?>
                         <input type="checkbox" class="custom-control-input" name="done" checked>
                     <?php else: ?>
                         <input type="checkbox" class="custom-control-input" name="done">
                     <?php endif; ?>
                     <label class="custom-control-label"></label>
+
+                    </a>
                 </div>
             </td>
         </tr>
