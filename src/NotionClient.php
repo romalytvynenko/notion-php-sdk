@@ -42,7 +42,6 @@ class NotionClient
         $this->config->setToken($token);
 
         $this->cache = new FilesystemAdapter('', $this->config->getCacheLifetime());
-        $this->cache->clear();
         $this->client = new Client([
             'base_uri' => $this->config->getApiBaseUrl(),
             'cookies' => CookieJar::fromArray(

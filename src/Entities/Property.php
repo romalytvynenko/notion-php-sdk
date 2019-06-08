@@ -2,6 +2,7 @@
 
 namespace Notion\Entities;
 
+use DateTime;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -42,13 +43,17 @@ class Property
     {
         $type = $this->schema['type'] ?? '';
         switch ($type) {
+            case 'checkbox':
+                return $this->value === 'Yes';
+
             case 'date':
-                return new \DateTime($this->value);
+                return new DateTime($this->value);
 
             case 'multi_select':
             case 'select':
             case 'text':
                 return trim($this->value);
+
             default:
                 return $this->value;
         }

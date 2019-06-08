@@ -9,6 +9,11 @@ use Notion\Entities\Entity;
 use Notion\Entities\Property;
 use Ramsey\Uuid\UuidInterface;
 
+/**
+ * @property string id
+ * @property string title
+ * @property string description
+ */
 class BasicBlock extends Entity implements BlockInterface
 {
     /**
@@ -24,9 +29,21 @@ class BasicBlock extends Entity implements BlockInterface
 
     public function __get($name)
     {
-        $property = $this->getProperty($name);
+        switch ($name) {
+            case 'id':
+                return $this->getId()->toString();
 
-        return $property ? $property->getValue() : null;
+            case 'description':
+                return $this->getDescription();
+
+            case 'title':
+                return $this->getTitle();
+
+            default:
+                $property = $this->getProperty($name);
+
+                return $property ? $property->getValue() : null;
+        }
     }
 
     public function __set($name, $value): void

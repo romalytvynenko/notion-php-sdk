@@ -17,7 +17,7 @@ $todoPage = $client
 
 /** @var Collection|CollectionRowBlock[] $todos */
 $todos = $todoPage->getRows()->sortBy(function (CollectionRowBlock $child) {
-    return $child->getProperty('Done')->getValue();
+    return $child->done;
 });
 
 $routinePage = $client
@@ -35,7 +35,7 @@ $routinePage = $client
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/minty/bootstrap.min.css">
 </head>
 <body style="padding: 2rem">
-<h1><?= $routinePage->getTitle() ?></h1>
+<h1><?= $routinePage->title ?></h1>
 <ul>
     <?php echo $routinePage->getRows()->map(function (CollectionRowBlock $block) {
         ?>
@@ -43,8 +43,8 @@ $routinePage = $client
         <?php
     }); ?>
 </ul>
-<h1><?= $todoPage->getTitle() ?></h1>
-<h2><?= $todoPage->getDescription() ?></h2>
+<h1><?= $todoPage->title ?></h1>
+<h2><?= $todoPage->description ?></h2>
 <table class="table table-striped table-hover">
     <thead>
     <tr>
@@ -58,8 +58,8 @@ $routinePage = $client
     </thead>
     <?php foreach ($todos as $child): ?>
         <tr>
-            <td><?= $child->getId()->toString() ?></td>
-            <td><?= $child->getTitle() ?></td>
+            <td><?= $child->id ?></td>
+            <td><?= $child->title ?></td>
             <td style="background-color: <?= $child
                 ->getProperty('Priority')
                 ->getOptionAttribute('color') ?>"><?= $child->priority ?></td>
@@ -69,7 +69,7 @@ $routinePage = $client
             <td><?= $child->tags ?></td>
             <td>
                 <div class="custom-control custom-checkbox">
-                    <?php if ($child->getProperty('Done')->getValue() === 'Yes'): ?>
+                    <?php if ($child->done): ?>
                         <input type="checkbox" class="custom-control-input" name="done" checked>
                     <?php else: ?>
                         <input type="checkbox" class="custom-control-input" name="done">
