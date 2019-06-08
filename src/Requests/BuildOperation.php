@@ -20,7 +20,7 @@ class BuildOperation implements Arrayable
     protected $command;
     protected $table;
 
-    public function __construct(UuidInterface $id, $path, $args, $command, $table)
+    public function __construct(UuidInterface $id, $path, $args, $command = 'set', $table = 'block')
     {
         $this->id = $id;
         $this->path = is_string($path) ? explode('.', $path) : $path;

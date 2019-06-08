@@ -178,23 +178,25 @@ class NotionClient
         array $attributes,
         array $children = []
     ): UuidInterface {
-
         //$parent = $parent->getParent();
         $uuid = Uuid::uuid4();
         $operation = new BuildOperation(
             $uuid,
             [],
-            array_merge([
-                'id' => $uuid->toString(),
-                'version' => 1,
-                'alive' => true,
-                'created_by' => $this->getCurrentUser()
-                    ->getId()
-                    ->toString(),
-                'created_time' => time(),
-                'parent_id' => $parent->getId()->toString(),
-                'parent_table' => $parent->getTable(),
-            ], $attributes),
+            array_merge(
+                [
+                    'id' => $uuid->toString(),
+                    'version' => 1,
+                    'alive' => true,
+                    'created_by' => $this->getCurrentUser()
+                        ->getId()
+                        ->toString(),
+                    'created_time' => time(),
+                    'parent_id' => $parent->getId()->toString(),
+                    'parent_table' => $parent->getTable(),
+                ],
+                $attributes
+            ),
             'set',
             $table
         );
@@ -207,7 +209,7 @@ class NotionClient
     /**
      * @param BuildOperation[] $operations
      */
-    private function submitTransation(array $operations): void
+    public function submitTransation(array $operations): void
     {
         $operations = collect($operations);
 

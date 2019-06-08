@@ -72,6 +72,11 @@ class Record
         return Arr::get($this->attributes, $key);
     }
 
+    public function getTable()
+    {
+        return '';
+    }
+
     public function set(string $key, $value): void
     {
         Arr::set($this->attributes, $key, $value);

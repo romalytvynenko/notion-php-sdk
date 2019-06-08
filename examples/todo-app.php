@@ -21,7 +21,7 @@ $todos = $todoPage->getRows()->sortBy(function (CollectionRowBlock $child) {
 });
 
 if ($title = $_POST['title'] ?? '') {
-    $todoPage->addRow(['title' => $title]);
+    $block = $todoPage->addRow(['title' => $title]);
 }
 ?>
 <!doctype html>

@@ -2,6 +2,7 @@
 
 namespace Notion\Entities\Blocks;
 
+use Illuminate\Support\Collection;
 use Ramsey\Uuid\UuidInterface;
 
 interface BlockInterface
@@ -13,4 +14,12 @@ interface BlockInterface
     public function getParent(): ?BlockInterface;
 
     public function getCollection(): ?CollectionBlock;
+
+    public function getProperties(): Collection;
+
+    public function setProperties(Collection $properties): void;
+
+    public function getProperty(string $needle);
+
+    public function setProperty(string $key, $value);
 }

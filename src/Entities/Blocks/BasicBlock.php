@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Notion\Entities\Property;
 use Notion\Entities\Record;
+use Notion\Requests\BuildOperation;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -167,6 +168,10 @@ class BasicBlock extends Record implements BlockInterface
 
     public function setProperty(string $key, $value)
     {
+        $operation = new BuildOperation($this->getId(), ['properties', $key], [[$value]], 'set', $this->getTable());
+
+        $this->getClient()->submitTransation([$operation]);
+
         return $this->properties[$key] = $value;
     }
 

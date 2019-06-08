@@ -17,10 +17,15 @@ class CollectionBlock extends BasicBlock
         return 'collection';
     }
 
-    public function addRow(array $attributes)
+    public function addRow(array $attributes): CollectionRowBlock
     {
         $blockId = $this->getClient()->createRecord('block', $this, ['type' => PageBlock::BLOCK_TYPE]);
         $block = $this->getClient()->getBlock($blockId->toString());
+        foreach ($attributes as $key => $value) {
+            $block->setProperty($key, $value);
+        }
+
+        return $block;
     }
 
     /**
