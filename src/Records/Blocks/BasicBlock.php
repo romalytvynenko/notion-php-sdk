@@ -77,6 +77,10 @@ class BasicBlock extends Record implements BlockInterface
             PageBlock::BLOCK_TYPE => PageBlock::class,
             CodeBlock::BLOCK_TYPE => CodeBlock::class,
             SubHeaderBlock::BLOCK_TYPE => SubHeaderBlock::class,
+            SubsubHeaderBlock::BLOCK_TYPE => SubsubHeaderBlock::class,
+            QuoteBlock::BLOCK_TYPE => QuoteBlock::class,
+            ImageBlock::BLOCK_TYPE => ImageBlock::class,
+            HeaderBlock::BLOCK_TYPE => HeaderBlock::class,
             NumberedListBlock::BLOCK_TYPE => NumberedListBlock::class,
         ];
     }
@@ -252,8 +256,6 @@ class BasicBlock extends Record implements BlockInterface
                     case 'c':
                         return '`'.$text.'`';
                     default:
-                        dd($chunk, $format, $options, $text);
-
                         return $text;
                 }
             })

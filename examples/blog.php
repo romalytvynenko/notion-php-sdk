@@ -40,7 +40,7 @@ if ($article = $_GET['article'] ?? null) {
             <main class="col">
                 <img src="<?= $article->cover ?>" class="img-fluid">
                 <h2>
-                    <?= $article->icon ?>
+                    <?= strlen($article->icon) === 1 ? $article->icon : '<img src="' . $article->icon . '">' ?>
                     <?= $article->title ?><br />
                     <small class="text-muted">Length: <?= $article->length ?></small><br />
                     <small class="text-muted">Status: <?= $article->status ?></small>

@@ -74,10 +74,7 @@ class NotionClient
         $block->setClient($this);
 
         if ($block->get('parent_table') === 'collection' && $block->get('properties')) {
-            $schema = $block->getParent()->get('schema');
-            if (!$schema) {
-                dd($block, $block->getParent());
-            }
+            $schema = $block->getParent()->get('schema') ?? [];
             $block->createProperties($schema);
         }
 
