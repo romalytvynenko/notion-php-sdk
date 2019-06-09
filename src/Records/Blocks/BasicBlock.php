@@ -47,6 +47,10 @@ class BasicBlock extends Record implements BlockInterface
             case 'id':
                 return $this->getId()->toString();
 
+            case 'created_time':
+            case 'last_edited_time':
+                return new \DateTime('@'.round($this->get($name) / 1000));
+
             case 'contents':
             case 'cover':
             case 'icon':
@@ -128,7 +132,7 @@ class BasicBlock extends Record implements BlockInterface
 
     public function getIcon(): string
     {
-        return $this->get('format.page_icon');
+        return $this->get('format.page_icon') ?? '';
     }
 
     public function getDescription(): string

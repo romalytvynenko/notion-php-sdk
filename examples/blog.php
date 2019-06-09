@@ -12,6 +12,10 @@ $blogposts = $blogpostsPage->getRows();
 if ($article = $_GET['article'] ?? null) {
     $article = $client->getBlock($article);
 }
+
+function icon(\Notion\Records\Blocks\BlockInterface $block) {
+    return strlen($block->icon) === 1 ? $block->icon : '<img src="'.$block->icon.'">';
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -32,7 +36,12 @@ if ($article = $_GET['article'] ?? null) {
             <h2><?= $blogpostsPage->title ?></h2>
             <ul>
                 <?php foreach ($blogposts as $blogpost): ?>
-                    <li><a href="?article=<?= $blogpost->id ?>"><?= $blogpost->title ?></a></li>
+                    <li>
+                        <?= icon($blogpost) ?>
+                        <a href="?article=<?= $blogpost->id ?>"><?= $blogpost->title ?></a><br>
+                        <small class="text-muted">
+                            <?= $blogpost->created_time->format('Y-m-d') ?>
+                        </small></li>
                 <?php endforeach; ?>
             </ul>
         </aside>
@@ -40,7 +49,7 @@ if ($article = $_GET['article'] ?? null) {
             <main class="col">
                 <img src="<?= $article->cover ?>" class="img-fluid">
                 <h2>
-                    <?= strlen($article->icon) === 1 ? $article->icon : '<img src="' . $article->icon . '">' ?>
+                    <?= icon($article) ?>
                     <?= $article->title ?><br />
                     <small class="text-muted">Length: <?= $article->length ?></small><br />
                     <small class="text-muted">Status: <?= $article->status ?></small>
