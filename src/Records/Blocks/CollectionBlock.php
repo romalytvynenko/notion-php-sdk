@@ -11,7 +11,7 @@ class CollectionBlock extends BasicBlock
 
     public function getTitle(): string
     {
-        return $this->getTextAttribute('name') ?: parent::getTitle();
+        return $this->getUnwrapped('name') ?: parent::getTitle();
     }
 
     public function getTable(): string

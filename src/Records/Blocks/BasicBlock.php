@@ -48,6 +48,7 @@ class BasicBlock extends Record implements BlockInterface
                 return $this->getId()->toString();
 
             case 'contents':
+            case 'cover':
             case 'icon':
             case 'description':
             case 'title':
@@ -70,6 +71,7 @@ class BasicBlock extends Record implements BlockInterface
         return [
             'collection_view_page' => CollectionViewBlock::class,
             BasicBlock::BLOCK_TYPE => BasicBlock::class,
+            TextBlock::BLOCK_TYPE => TextBlock::class,
             CollectionBlock::BLOCK_TYPE => CollectionBlock::class,
             CollectionViewBlock::BLOCK_TYPE => CollectionViewBlock::class,
             PageBlock::BLOCK_TYPE => PageBlock::class,
@@ -115,6 +117,11 @@ class BasicBlock extends Record implements BlockInterface
         $this->format = $format;
     }
 
+    public function getCover()
+    {
+        return $this->get('format.page_cover');
+    }
+
     public function getIcon(): string
     {
         return $this->get('format.page_icon');
@@ -122,7 +129,7 @@ class BasicBlock extends Record implements BlockInterface
 
     public function getDescription(): string
     {
-        return $this->getTextAttribute('description');
+        return $this->getUnwrapped('description');
     }
 
     public function getParent(): ?BlockInterface
@@ -210,7 +217,7 @@ class BasicBlock extends Record implements BlockInterface
         $this->getClient()->submitTransation([$operation]);
     }
 
-    protected function getTextAttribute(string $propertyName): string
+    protected function getUnwrapped(string $propertyName): string
     {
         $property = $this->get($propertyName) ?? [];
 
@@ -222,7 +229,35 @@ class BasicBlock extends Record implements BlockInterface
      */
     protected function unwrapValue(array $property)
     {
-        return implode(Arr::flatten($property)) ?? '';
+        return collect($property)
+            ->map(function ($chunk) {
+                if (count($chunk) === 1) {
+                    return $chunk[0];
+                }
+
+                [$text, $format] = $chunk;
+                $options = $format[0][1] ?? [];
+                $format = $format[0][0];
+
+                switch ($format) {
+                    case 'i':
+                        return '*'.$text.'*';
+                    case 'b':
+                        return '**'.$text.'**';
+                    case 'd':
+                    case 'p':
+                        return $text;
+                    case 'a':
+                        return sprintf('[%s](%s)', $text, $options);
+                    case 'c':
+                        return '`'.$text.'`';
+                    default:
+                        dd($chunk, $format, $options, $text);
+
+                        return $text;
+                }
+            })
+            ->join(' ');
     }
 
     public function getCollection(): ?CollectionBlock
@@ -260,7 +295,7 @@ class BasicBlock extends Record implements BlockInterface
 
     public function toString()
     {
-        return $this->getTitle().PHP_EOL;
+        return $this->getTitle().PHP_EOL.PHP_EOL;
     }
 
     public function toHtml()

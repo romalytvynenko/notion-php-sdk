@@ -8,6 +8,8 @@ class CodeBlock extends BasicBlock
 
     public function toString()
     {
-        return '```'.parent::toString().'```'.PHP_EOL;
+        $language = mb_strtolower($this->getProperty('language')->getValue());
+
+        return '```'.$language.PHP_EOL.trim(parent::toString()).PHP_EOL.'```'.PHP_EOL;
     }
 }

@@ -8,6 +8,6 @@ class NumberedListBlock extends BasicBlock
 
     public function toString()
     {
-        return parent::toString();
+        return '- '.parent::toString();
     }
 }
