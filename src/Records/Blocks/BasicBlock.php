@@ -130,7 +130,7 @@ class BasicBlock extends Record implements BlockInterface
 
     public function getCover()
     {
-        return Utils::signUrl($this->get('format.page_cover'));
+        return Utils::signUrl($this->get('format.page_cover') ?? '');
     }
 
     public function getIcon(): string
@@ -249,6 +249,9 @@ class BasicBlock extends Record implements BlockInterface
                 [$text, $format] = $chunk;
                 $options = $format[0][1] ?? [];
                 $format = $format[0][0];
+                if (!trim($text)) {
+                    return;
+                }
 
                 switch ($format) {
                     case 'i':

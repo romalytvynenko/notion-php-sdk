@@ -1,23 +1,28 @@
 <?php
 
+use Illuminate\Support\Str;
 use Notion\NotionClient;
+use Notion\Records\Blocks\CollectionRowBlock;
+use Notion\Records\Blocks\PageBlock;
 
 require './_bootstrap.php';
 $client = new NotionClient(getenv('MADEWITHLOVE_NOTION_TOKEN'));
 $blogpostsPage = $client
     ->getBlock('https://www.notion.so/f0dd308b371c4885a1feca986e7b6fa3?v=784d3dcaafda4bf69d0682efc378a319')
     ->getCollection();
-$blogposts = $blogpostsPage->getRows();
+
+$blogposts = $blogpostsPage->getRows()->sortByDesc(function (CollectionRowBlock $block) {
+    return $block->created_time->format('Y-m-d');
+});
 
 if ($article = $_GET['article'] ?? null) {
+    /** @var PageBlock $article */
     $article = $client->getBlock($article);
 }
 
-function icon(\Notion\Records\Blocks\PageBlock $block)
+function icon(PageBlock $block)
 {
-    return !\Illuminate\Support\Str::contains($block->icon, 'http')
-        ? $block->icon
-        : '<img src="' . $block->icon . '" class="icon">';
+    return !Str::contains($block->icon, 'http') ? $block->icon : '<img src="' . $block->icon . '" class="icon">';
 }
 ?>
 <!doctype html>

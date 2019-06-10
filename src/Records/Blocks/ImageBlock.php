@@ -12,6 +12,6 @@ class ImageBlock extends BasicBlock
     {
         $url = $this->getProperty('source')->getValue();
 
-        return sprintf('![](%s)', Utils::signUrl($url));
+        return sprintf('![](%s)', Utils::signUrl($url)).PHP_EOL.PHP_EOL;
     }
 }
