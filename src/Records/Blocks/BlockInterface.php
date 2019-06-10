@@ -9,11 +9,9 @@ interface BlockInterface
 {
     public function getId(): UuidInterface;
 
+    public function getTitle(): string;
+
     public function getTable(): string;
-
-    public function getParent(): ?BlockInterface;
-
-    public function getCollection(): ?CollectionBlock;
 
     public function getProperties(): Collection;
 
@@ -22,4 +20,8 @@ interface BlockInterface
     public function getProperty(string $needle);
 
     public function setProperty(string $key, $value);
+
+    public function getParent(): ?BlockInterface;
+
+    public function getCollection(): ?CollectionBlock;
 }

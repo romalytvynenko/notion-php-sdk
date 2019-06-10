@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use League\CommonMark\CommonMarkConverter;
 use Notion\Records\Property;
 use Notion\Records\Record;
+use Notion\Records\Url;
 use Notion\Requests\BuildOperation;
 use Ramsey\Uuid\UuidInterface;
 
@@ -85,6 +86,8 @@ class BasicBlock extends Record implements BlockInterface
             QuoteBlock::BLOCK_TYPE => QuoteBlock::class,
             ImageBlock::BLOCK_TYPE => ImageBlock::class,
             HeaderBlock::BLOCK_TYPE => HeaderBlock::class,
+            ColumnListBlock::BLOCK_TYPE => ColumnListBlock::class,
+            ColumnBlock::BLOCK_TYPE => ColumnBlock::class,
             NumberedListBlock::BLOCK_TYPE => NumberedListBlock::class,
         ];
     }
@@ -132,7 +135,7 @@ class BasicBlock extends Record implements BlockInterface
 
     public function getIcon(): string
     {
-        return $this->get('format.page_icon') ?? '';
+        return (new Url($this->get('format.page_icon') ?? ''))->toSignedUrl();
     }
 
     public function getDescription(): string
@@ -301,7 +304,12 @@ class BasicBlock extends Record implements BlockInterface
 
     public function toString()
     {
-        return $this->getTitle().PHP_EOL.PHP_EOL;
+        $title = $this->getTitle();
+        if ($this->get('content')) {
+            $title .= $this->getContents();
+        }
+
+        return $title.PHP_EOL.PHP_EOL;
     }
 
     public function toHtml()

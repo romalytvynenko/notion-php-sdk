@@ -13,8 +13,11 @@ if ($article = $_GET['article'] ?? null) {
     $article = $client->getBlock($article);
 }
 
-function icon(\Notion\Records\Blocks\BlockInterface $block) {
-    return strlen($block->icon) === 1 ? $block->icon : '<img src="'.$block->icon.'">';
+function icon(\Notion\Records\Blocks\PageBlock $block)
+{
+    return !\Illuminate\Support\Str::contains($block->icon, 'http')
+        ? $block->icon
+        : '<img src="' . $block->icon . '" class="icon">';
 }
 ?>
 <!doctype html>
@@ -27,6 +30,11 @@ function icon(\Notion\Records\Blocks\BlockInterface $block) {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/litera/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/themes/prism-coy.min.css">
     <title>My Notion-Powered Blog</title>
+    <style>
+        .icon {
+            width: 1.25em;
+        }
+    </style>
 </head>
 <body style="padding: 5rem">
 <div class="container-full">
