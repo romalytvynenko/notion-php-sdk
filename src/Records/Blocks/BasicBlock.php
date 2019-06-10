@@ -252,9 +252,9 @@ class BasicBlock extends Record implements BlockInterface
 
                 switch ($format) {
                     case 'i':
-                        return '*'.$text.'*';
+                        return '*'.trim($text).'*';
                     case 'b':
-                        return '**'.$text.'**';
+                        return '**'.trim($text).'**';
                     case 'd':
                     case 'p':
                         return $text;
