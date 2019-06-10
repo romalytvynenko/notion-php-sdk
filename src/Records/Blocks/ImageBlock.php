@@ -2,7 +2,7 @@
 
 namespace Notion\Records\Blocks;
 
-use Notion\Records\Url;
+use Notion\Utils;
 
 class ImageBlock extends BasicBlock
 {
@@ -11,8 +11,7 @@ class ImageBlock extends BasicBlock
     public function toString()
     {
         $url = $this->getProperty('source')->getValue();
-        $url = (new Url($url))->toSignedUrl();
 
-        return sprintf('![](%s)', $url);
+        return sprintf('![](%s)', Utils::signUrl($url));
     }
 }

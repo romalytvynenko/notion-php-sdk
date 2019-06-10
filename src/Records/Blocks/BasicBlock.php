@@ -8,8 +8,8 @@ use Illuminate\Support\Str;
 use League\CommonMark\CommonMarkConverter;
 use Notion\Records\Property;
 use Notion\Records\Record;
-use Notion\Records\Url;
 use Notion\Requests\BuildOperation;
+use Notion\Utils;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -130,12 +130,12 @@ class BasicBlock extends Record implements BlockInterface
 
     public function getCover()
     {
-        return $this->get('format.page_cover');
+        return Utils::signUrl($this->get('format.page_cover'));
     }
 
     public function getIcon(): string
     {
-        return (new Url($this->get('format.page_icon') ?? ''))->toSignedUrl();
+        return Utils::signUrl($this->get('format.page_icon') ?? '');
     }
 
     public function getDescription(): string
