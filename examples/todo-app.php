@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Collection;
+use Notion\NotionClient;
 use Notion\Records\Blocks\CollectionRowBlock;
 use Notion\Records\Blocks\CollectionViewBlock;
-use Notion\NotionClient;
 
 require './_bootstrap.php';
 
@@ -36,8 +36,8 @@ if ($title = $_POST['title'] ?? '') {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/minty/bootstrap.min.css">
 </head>
 <body style="padding: 2rem">
-<h1><?= $todoPage->title ?></h1>
-<h2><?= $todoPage->description ?></h2>
+<h1><?= $todoPage->title; ?></h1>
+<h2><?= $todoPage->description; ?></h2>
 <form method="POST">
     <div class="form-group">
         <label for="title">Task</label>
@@ -56,32 +56,32 @@ if ($title = $_POST['title'] ?? '') {
         <td>Done</td>
     </tr>
     </thead>
-    <?php foreach ($todos as $child): ?>
+    <?php foreach ($todos as $child) { ?>
         <tr>
-            <td><?= $child->id ?></td>
-            <td><?= $child->title ?></td>
+            <td><?= $child->id; ?></td>
+            <td><?= $child->title; ?></td>
             <td style="background-color: <?= $child
-                ->getProperty('Priority')
-                ->getOptionAttribute('color') ?>"><?= $child->priority ?></td>
+        ->getProperty('Priority')
+        ->getOptionAttribute('color'); ?>"><?= $child->priority; ?></td>
             <td style="background-color: <?= $child
-                ->getProperty('Effort')
-                ->getOptionAttribute('color') ?>"><?= $child->effort ?></td>
-            <td><?= $child->tags ?></td>
+        ->getProperty('Effort')
+        ->getOptionAttribute('color'); ?>"><?= $child->effort; ?></td>
+            <td><?= $child->tags; ?></td>
             <td>
                 <div class="custom-control custom-checkbox">
-                    <a href="?mark_as_done=<?= $child->id ?>">
-                    <?php if ($child->done): ?>
+                    <a href="?mark_as_done=<?= $child->id; ?>">
+                    <?php if ($child->done) { ?>
                         <input type="checkbox" class="custom-control-input" name="done" checked>
-                    <?php else: ?>
+                    <?php } else { ?>
                         <input type="checkbox" class="custom-control-input" name="done">
-                    <?php endif; ?>
+                    <?php } ?>
                     <label class="custom-control-label"></label>
 
                     </a>
                 </div>
             </td>
         </tr>
-    <?php endforeach; ?>
+    <?php } ?>
 </table>
 </body>
 </html>

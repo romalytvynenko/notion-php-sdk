@@ -1,18 +1,18 @@
 <?php
 
+use Notion\NotionClient;
 use Notion\Records\Blocks\CollectionRowBlock;
 use Notion\Records\Blocks\CollectionViewBlock;
-use Notion\NotionClient;
 
 require './_bootstrap.php';
 
 $client = new NotionClient(getenv('MADEWITHLOVE_NOTION_TOKEN'));
 $coffees = collect([
     'Ghent' => 'a61eb783a20940b59652fbdedb9a0292?v=c99913c2de5548af8c56c2337406fbe4',
-    'Leuven' => '602c2098ceac4816bf5a27ce5f2d237d?v=702bd45ffc1c4c378c6f91d6e90a36a5'
+    'Leuven' => '602c2098ceac4816bf5a27ce5f2d237d?v=702bd45ffc1c4c378c6f91d6e90a36a5',
 ])
     ->map(function (string $url) use ($client) {
-        return $client->getBlock('https://www.notion.so/madewithlove/' . $url);
+        return $client->getBlock('https://www.notion.so/madewithlove/'.$url);
     })
     ->map(function (CollectionViewBlock $view) {
         return $view
@@ -23,7 +23,7 @@ $coffees = collect([
             ->values();
     });
 
-/** @var CollectionRowBlock $row */
+/* @var CollectionRowBlock $row */
 ?>
 <!doctype html>
 <html lang="en">
@@ -38,50 +38,50 @@ $coffees = collect([
 <body style="padding: 2rem">
 <div class="container">
     <div class="row">
-        <?php foreach ($coffees as $location => $rows): ?>
+        <?php foreach ($coffees as $location => $rows) { ?>
             <div class="col">
-                <h1><?= $location ?> Coffee</h1>
+                <h1><?= $location; ?> Coffee</h1>
                 <hr>
-                <?php foreach ($rows as $key => $row): ?>
-                    <?= $key === 1 ? '<div class="collapse" id="older' . $location . '">' : '' ?>
-                    <div class="card mb-2 <?php if ($key === 0): ?>text-white bg-primary<?php endif; ?>">
+                <?php foreach ($rows as $key => $row) { ?>
+                    <?= $key === 1 ? '<div class="collapse" id="older'.$location.'">' : ''; ?>
+                    <div class="card mb-2 <?php if ($key === 0) { ?>text-white bg-primary<?php } ?>">
                         <div class="card-body">
                             <h5 class="card-title">
-                                <?= $row->icon ?>
-                                <?= $row->name ?>
+                                <?= $row->icon; ?>
+                                <?= $row->name; ?>
                             </h5>
-                            <?php if ($row->country || $row->region): ?>
+                            <?php if ($row->country || $row->region) { ?>
                                 <h6 class="card-subtitle mb-2">
                                     <em>
                                         from
                                         <strong><?= trim(
                                             sprintf('%s, %s', $row->country, $row->region),
                                             ' ,'
-                                        ) ?></strong>
+                                        ); ?></strong>
                                     </em>
                                 </h6>
-                            <?php endif; ?>
+                            <?php } ?>
                             <p class="card-text">
-                                <strong>Roaster:</strong> <?= $row->roaster ?><br />
-                                <strong>On Machine Since:</strong> <?= $row->on_machine_since->format('Y-m-d') ?><br />
-                                <?php if ($row->tasting_notes): ?>
+                                <strong>Roaster:</strong> <?= $row->roaster; ?><br />
+                                <strong>On Machine Since:</strong> <?= $row->on_machine_since->format('Y-m-d'); ?><br />
+                                <?php if ($row->tasting_notes) { ?>
                                     <strong>Tasting Notes:</strong><br />
-                                    <?= $row->tasting_notes ?><br />
-                                <?php endif; ?>
+                                    <?= $row->tasting_notes; ?><br />
+                                <?php } ?>
                             <hr>
-                                <?= $row->getContents() ?>
+                                <?= $row->getContents(); ?>
                             </p>
                         </div>
                     </div>
                     <?= $key === 0
-                        ? '<button class="btn btn-info btn-block mb-3" data-toggle="collapse" data-target="#older' .
-                            $location .
+                        ? '<button class="btn btn-info btn-block mb-3" data-toggle="collapse" data-target="#older'.
+                            $location.
                             '">Show older coffees</button>'
-                        : '' ?>
-                    <?= $key === $coffees[$location]->count() - 1 ? '</div>' : '' ?>
-                <?php endforeach; ?>
+                        : ''; ?>
+                    <?= $key === $coffees[$location]->count() - 1 ? '</div>' : ''; ?>
+                <?php } ?>
             </div>
-        <?php endforeach; ?>
+        <?php } ?>
     </div>
 </div>
 <script

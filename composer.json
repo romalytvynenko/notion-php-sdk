@@ -29,7 +29,7 @@
         }
     },
     "scripts": {
-        "lint": "prettier --write '{src,examples}/**/*' --print-width 120 --single-quote && php-cs-fixer fix -v",
+        "lint": "prettier --write '{src,examples,tests}/**/*' --print-width 120 --single-quote && php-cs-fixer fix -v",
         "test": "phpunit"
     },
     "config": {

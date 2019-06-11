@@ -7,7 +7,7 @@ class IdentifierTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider provideUrls
      */
-    public function testCanCreateIdentifierFromUrl(string $url, string $expected)
+    public function testCanCreateIdentifierFromUrl(string $url, string $expected): void
     {
         $identifier = Identifier::fromUrl($url);
         $this->assertEquals($expected, $identifier->toString());

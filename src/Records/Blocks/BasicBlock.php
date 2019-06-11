@@ -332,11 +332,11 @@ class BasicBlock extends Record implements BlockInterface, Arrayable
     public function toArray()
     {
         return [
-          'id' => $this->getId()->toString(),
-          'title' => $this->getTitle(),
-          'description' => $this->getDescription(),
-          'properties' => $this->properties->toArray(),
-          'attributes' => $this->attributes,
+            'id' => $this->getId()->toString(),
+            'title' => $this->getTitle(),
+            'description' => $this->getDescription(),
+            'properties' => $this->properties->toArray(),
+            'attributes' => $this->attributes,
         ];
     }
 }

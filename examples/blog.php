@@ -22,7 +22,7 @@ if ($article = $_GET['article'] ?? null) {
 
 function icon(PageBlock $block)
 {
-    return !Str::contains($block->icon, 'http') ? $block->icon : '<img src="' . $block->icon . '" class="icon">';
+    return !Str::contains($block->icon, 'http') ? $block->icon : '<img src="'.$block->icon.'" class="icon">';
 }
 ?>
 <!doctype html>
@@ -46,31 +46,31 @@ function icon(PageBlock $block)
     <h1>My Notion-Powered Blog</h1>
     <div class="row">
         <aside class="col-3">
-            <h2><?= $blogpostsPage->title ?></h2>
+            <h2><?= $blogpostsPage->title; ?></h2>
             <ul>
-                <?php foreach ($blogposts as $blogpost): ?>
+                <?php foreach ($blogposts as $blogpost) { ?>
                     <li>
-                        <?= icon($blogpost) ?>
-                        <a href="?article=<?= $blogpost->id ?>"><?= $blogpost->title ?></a><br>
+                        <?= icon($blogpost); ?>
+                        <a href="?article=<?= $blogpost->id; ?>"><?= $blogpost->title; ?></a><br>
                         <small class="text-muted">
-                            <?= $blogpost->created_time->format('Y-m-d') ?>
+                            <?= $blogpost->created_time->format('Y-m-d'); ?>
                         </small></li>
-                <?php endforeach; ?>
+                <?php } ?>
             </ul>
         </aside>
-        <?php if ($article): ?>
+        <?php if ($article) { ?>
             <main class="col">
-                <img src="<?= $article->cover ?>" class="img-fluid">
+                <img src="<?= $article->cover; ?>" class="img-fluid">
                 <h2>
-                    <?= icon($article) ?>
-                    <?= $article->title ?><br />
-                    <small class="text-muted">Length: <?= $article->length ?></small><br />
-                    <small class="text-muted">Status: <?= $article->status ?></small>
+                    <?= icon($article); ?>
+                    <?= $article->title; ?><br />
+                    <small class="text-muted">Length: <?= $article->length; ?></small><br />
+                    <small class="text-muted">Status: <?= $article->status; ?></small>
                 </h2>
                 <hr>
-                <?= $article->toHtml() ?>
+                <?= $article->toHtml(); ?>
             </main>
-        <?php endif; ?>
+        <?php } ?>
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.16.0/prism.min.js"></script>
