@@ -259,6 +259,7 @@ class BasicBlock extends Record implements BlockInterface
                     case 'b':
                         return '**'.trim($text).'**';
                     case 'd':
+                        return $options['start_date'];
                     case 'p':
                         return $text;
                     case 'a':
