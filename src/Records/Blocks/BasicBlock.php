@@ -2,6 +2,7 @@
 
 namespace Notion\Records\Blocks;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -17,7 +18,7 @@ use Ramsey\Uuid\UuidInterface;
  * @property string title
  * @property string description
  */
-class BasicBlock extends Record implements BlockInterface
+class BasicBlock extends Record implements BlockInterface, Arrayable
 {
     public const BLOCK_TYPE = 'block';
 
@@ -326,5 +327,16 @@ class BasicBlock extends Record implements BlockInterface
     public function __toString()
     {
         return $this->toString();
+    }
+
+    public function toArray()
+    {
+        return [
+          'id' => $this->getId()->toString(),
+          'title' => $this->getTitle(),
+          'description' => $this->getDescription(),
+          'properties' => $this->properties->toArray(),
+          'attributes' => $this->attributes,
+        ];
     }
 }
