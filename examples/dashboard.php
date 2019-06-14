@@ -26,7 +26,7 @@ $issuesGroomed = $nextSprint
     ->getRows();
 
 $pendingProposals = $client
-    ->getBlock('https://www.notion.so/madewithlove/af6f022f76144cc08b78c5b1842c4846?v=bf2d808edb8f4a4c88c12140f41a2552')
+    ->getBlock(getenv('URL_PROPOSALS_PAGE'))
     ->getRows()
     ->filter(function (CollectionRowBlock $block) {
         return $block->status === 'Review';
@@ -43,7 +43,7 @@ $sprint = $sprints->first(function (CollectionRowBlock $block) {
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>B.OS dashboard</title>
+    <title>Project dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css">
 </head>
 <body style="padding: 2rem">
