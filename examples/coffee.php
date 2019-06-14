@@ -8,8 +8,8 @@ require './_bootstrap.php';
 
 $client = new NotionClient(getenv('MADEWITHLOVE_NOTION_TOKEN'));
 $coffees = collect([
-    'Ghent' => 'a61eb783a20940b59652fbdedb9a0292?v=c99913c2de5548af8c56c2337406fbe4',
-    'Leuven' => '602c2098ceac4816bf5a27ce5f2d237d?v=702bd45ffc1c4c378c6f91d6e90a36a5',
+    'Ghent' => getenv('URL_GHENT_PAGE'),
+    'Leuven' => getenv('URL_LEUVEN_PAGE'),
 ])
     ->map(function (string $url) use ($client) {
         return $client->getBlock('https://www.notion.so/madewithlove/'.$url);
