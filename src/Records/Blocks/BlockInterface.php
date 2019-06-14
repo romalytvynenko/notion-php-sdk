@@ -3,12 +3,10 @@
 namespace Notion\Records\Blocks;
 
 use Illuminate\Support\Collection;
-use Ramsey\Uuid\UuidInterface;
+use Notion\Records\RecordInterface;
 
-interface BlockInterface
+interface BlockInterface extends RecordInterface
 {
-    public function getId(): UuidInterface;
-
     public function getTitle(): string;
 
     public function getTable(): string;
@@ -21,7 +19,9 @@ interface BlockInterface
 
     public function setProperty(string $key, $value);
 
-    public function getParent(): ?BlockInterface;
+    public function getParent(): RecordInterface;
 
     public function getCollection(): ?CollectionBlock;
+
+    public function getRows(): Collection;
 }

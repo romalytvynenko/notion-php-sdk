@@ -24,7 +24,7 @@ class NotionClient
     /**
      * @var Configuration
      */
-    protected $config;
+    protected $configuration;
 
     /**
      * @var Client
@@ -48,15 +48,15 @@ class NotionClient
 
     public function __construct(string $token, Configuration $config = null)
     {
-        $this->config = $config ?? new Configuration();
-        $this->config->setToken($token);
+        $this->configuration = $config ?? new Configuration();
+        $this->configuration->setToken($token);
 
-        $this->cache = new FilesystemAdapter('', $this->config->getCacheLifetime());
+        $this->cache = new FilesystemAdapter('', $this->configuration->getCacheLifetime());
         $this->client = new Client([
-            'base_uri' => $this->config->getApiBaseUrl(),
+            'base_uri' => $this->configuration->getApiBaseUrl(),
             'cookies' => CookieJar::fromArray(
                 [
-                    'token_v2' => $this->config->getToken(),
+                    'token_v2' => $this->configuration->getToken(),
                 ],
                 'www.notion.so'
             ),
@@ -158,10 +158,10 @@ class NotionClient
     {
         $response = $this->cachedJsonRequest('user-informations', 'loadUserContent');
         $fromRecordMap = static function (string $class, string $key, array $response): Record {
-            $currentSpace = $response['recordMap'][$key];
-            $currentSpace = Arr::first($currentSpace)['value'];
+            $record = $response['recordMap'][$key];
+            $record = Arr::first($record)['value'];
 
-            return new $class(Identifier::fromString($currentSpace['id']), $currentSpace);
+            return new $class(Identifier::fromString($record['id']), $record);
         };
 
         $this->currentSpace = $fromRecordMap(Space::class, 'space', $response);
@@ -224,7 +224,24 @@ class NotionClient
         ]);
     }
 
-    public function getSpace($parentId): void
+    public function getSpace($spaceId): Space
     {
+        $identifier = Identifier::fromString($spaceId);
+        $space = $this->getRecordValues(new RecordRequest('space', $identifier));
+
+        return new Space($identifier, $space);
+    }
+
+    public function getConfiguration(): Configuration
+    {
+        return $this->configuration;
+    }
+
+    public function getUser($userId)
+    {
+        $identifier = Identifier::fromString($userId);
+        $user = $this->getRecordValues(new RecordRequest('notion_user', $identifier));
+
+        return new User($identifier, $user['value'] ?? []);
     }
 }

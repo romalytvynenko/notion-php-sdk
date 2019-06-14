@@ -6,7 +6,7 @@ use Illuminate\Support\Arr;
 use Notion\ClientAware;
 use Ramsey\Uuid\UuidInterface;
 
-class Record
+class Record implements RecordInterface
 {
     use ClientAware;
 
@@ -85,5 +85,10 @@ class Record
     public function setAttributes(array $attributes): void
     {
         $this->attributes = $attributes;
+    }
+
+    public function getUrl(): string
+    {
+        return '';
     }
 }

@@ -61,6 +61,7 @@ class Property
             case 'multi_select':
             case 'select':
             case 'text':
+            case 'title':
                 return trim($this->value);
 
             default:
@@ -80,9 +81,14 @@ class Property
         }
     }
 
-    public function __toString()
+    public function toString(): string
     {
         return (string) $this->getValue();
+    }
+
+    public function __toString()
+    {
+        return $this->toString();
     }
 
     protected function getOptions(): Collection

@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use League\CommonMark\CommonMarkConverter;
 use Notion\Records\Property;
 use Notion\Records\Record;
+use Notion\Records\RecordInterface;
 use Notion\Requests\BuildOperation;
 use Notion\Utils;
 use Ramsey\Uuid\UuidInterface;
@@ -57,6 +58,7 @@ class BasicBlock extends Record implements BlockInterface, Arrayable
             case 'cover':
             case 'icon':
             case 'description':
+            case 'type':
             case 'title':
                 return $this->{'get'.ucfirst($name)}();
 
@@ -109,6 +111,21 @@ class BasicBlock extends Record implements BlockInterface, Arrayable
         return $block;
     }
 
+    public function getType()
+    {
+        return $this->get('type');
+    }
+
+    public function getUrl(): string
+    {
+        $id = str_replace('-', '', $this->id);
+        if ($this->getType() === 'page') {
+            return $this->client->getConfiguration()->getBaseUrl().$id;
+        }
+
+        return $this->getParent()->getUrl().'#'.$id;
+    }
+
     public function getTitle(): string
     {
         return (string) $this->getProperty('title');
@@ -144,7 +161,7 @@ class BasicBlock extends Record implements BlockInterface, Arrayable
         return $this->getUnwrapped('description');
     }
 
-    public function getParent(): ?BlockInterface
+    public function getParent(): RecordInterface
     {
         $isAlias = false;
         if (!$isAlias) {
@@ -157,6 +174,7 @@ class BasicBlock extends Record implements BlockInterface, Arrayable
 
         switch ($parentTable) {
             case 'block':
+            default:
                 return $this->getClient()->getBlock($parentId);
 
             case 'collection':
@@ -164,9 +182,6 @@ class BasicBlock extends Record implements BlockInterface, Arrayable
 
             case 'space':
                 return $this->getClient()->getSpace($parentId);
-
-            default:
-                return null;
         }
     }
 
@@ -262,7 +277,8 @@ class BasicBlock extends Record implements BlockInterface, Arrayable
                     case 'd':
                         return $options['start_date'];
                     case 'p':
-                        return $text;
+                    case 'u':
+                        return $this->client->getUser($options)->toString();
                     case 'a':
                         return sprintf('[%s](%s)', $text, $options);
                     case 'c':
@@ -338,5 +354,10 @@ class BasicBlock extends Record implements BlockInterface, Arrayable
             'properties' => $this->properties->toArray(),
             'attributes' => $this->attributes,
         ];
+    }
+
+    public function getRows(): Collection
+    {
+        return collect();
     }
 }

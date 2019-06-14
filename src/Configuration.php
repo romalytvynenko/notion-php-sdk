@@ -7,6 +7,11 @@ class Configuration
     /**
      * @var string
      */
+    private $baseUrl = 'https://www.notion.so/';
+
+    /**
+     * @var string
+     */
     private $apiBaseUrl = 'https://www.notion.so/api/v3/';
 
     /**
@@ -47,5 +52,15 @@ class Configuration
     public function setCacheLifetime(int $cacheLifetime): void
     {
         $this->cacheLifetime = $cacheLifetime;
+    }
+
+    public function getBaseUrl(): string
+    {
+        return $this->baseUrl;
+    }
+
+    public function setBaseUrl(string $baseUrl): void
+    {
+        $this->baseUrl = $baseUrl;
     }
 }

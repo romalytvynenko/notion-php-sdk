@@ -2,6 +2,8 @@
 
 namespace Notion\Records\Blocks;
 
+use Illuminate\Support\Collection;
+
 class CollectionViewBlock extends BasicBlock
 {
     public const BLOCK_TYPE = 'collection_view';
@@ -16,7 +18,7 @@ class CollectionViewBlock extends BasicBlock
         return $this->getClient()->getCollection($this->get('collection_id'));
     }
 
-    public function getRows()
+    public function getRows(): Collection
     {
         return $this->getCollection()->getRows();
     }
