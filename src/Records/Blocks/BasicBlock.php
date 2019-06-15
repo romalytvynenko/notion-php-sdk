@@ -69,6 +69,11 @@ class BasicBlock extends Record implements BlockInterface, Arrayable
         }
     }
 
+    public function __isset($key)
+    {
+        return (bool) $this->__get($key);
+    }
+
     public function __set($name, $value): void
     {
         $this->setProperty($name, $value);
@@ -302,6 +307,27 @@ class BasicBlock extends Record implements BlockInterface, Arrayable
                 return $this->client->getBlock($id);
             })
         );
+    }
+
+    public function getDeepChildren()
+    {
+        return $this->getChildren()->reduce(function (Collection $reduction, BasicBlock $block) {
+            switch (get_class($block)) {
+                case ColumnListBlock::class:
+                case ColumnBlock::class:
+                    return $reduction->merge($block->getDeepChildren());
+
+                default:
+                    return $reduction->push($block);
+            }
+        }, collect());
+    }
+
+    public function findChildByTitle(string $title, bool $partial = true): ?BasicBlock
+    {
+        return $this->getDeepChildren()->first(function (BasicBlock $block) use ($title, $partial) {
+            return $partial ? Str::contains($block->title, $title) : $block->title === $title;
+        });
     }
 
     public function getContents()

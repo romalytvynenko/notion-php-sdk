@@ -8,6 +8,11 @@ class CollectionViewBlock extends BasicBlock
 {
     public const BLOCK_TYPE = 'collection_view';
 
+    public function getTitle(): string
+    {
+        return parent::getTitle() ?: $this->getCollection()->getTitle();
+    }
+
     public function getTable(): string
     {
         return 'collection_view';

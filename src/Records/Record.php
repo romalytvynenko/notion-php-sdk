@@ -42,6 +42,11 @@ class Record implements RecordInterface
         $this->set($name, $value);
     }
 
+    public function __isset($key)
+    {
+        return isset($this->attributes[$key]);
+    }
+
     public function getId(): UuidInterface
     {
         return $this->id;

@@ -1,42 +1,40 @@
 <?php
 
+use Illuminate\Support\Collection;
 use Notion\NotionClient;
 use Notion\Records\Blocks\CollectionRowBlock;
+use Notion\Records\Blocks\PageBlock;
 
 require './_bootstrap.php';
 
 $client = new NotionClient(getenv('MADEWITHLOVE_NOTION_TOKEN'));
-$sprints = $client->getBlock(getenv('URL_PROJECT_PAGE'))->getRows();
+
+/** @var PageBlock $project */
+$project = $client->getBlock(getenv('URL_PROJECT_PAGE'));
+
+/** @var Collection|CollectionRowBlock[] $sprints */
+$sprints = $project->findChildByTitle('Grooming')->getRows();
 
 /** @var CollectionRowBlock $nextSprint */
-$nextSprint = $sprints
-    ->sortBy(function (CollectionRowBlock $block) {
-        return $block->ends;
-    })
-    ->first(function (CollectionRowBlock $block) {
-        return $block->status === 'Future';
-    });
+$nextSprint = $sprints->sortBy('ends')->firstWhere('status', '=', 'Future');
 
-/** @var \Illuminate\Support\Collection $issuesGroomed */
+/** @var Collection $issuesGroomed */
 $issuesGroomed = $nextSprint
     ->getChildren()
     ->first(function (Notion\Records\Blocks\BasicBlock $block) {
-        return $block->getCollection() ? $block->getCollection()->title : false;
+        return (bool) $block->getCollection();
     })
     ->getCollection()
     ->getRows();
 
 /** @var CollectionRowBlock[] $pendingProposals */
-$pendingProposals = $client
-    ->getBlock(getenv('URL_PROPOSALS_PAGE'))
+$pendingProposals = $project
+    ->findChildByTitle('Proposals')
+    ->findChildByTitle('Proposals')
     ->getRows()
-    ->filter(function (CollectionRowBlock $block) {
-        return $block->status === 'Review';
-    });
+    ->where('status', '=', 'Review');
 
-$sprint = $sprints->first(function (CollectionRowBlock $block) {
-    return $block->status === 'Current';
-});
+$sprint = $sprints->firstWhere('status', '=', 'Current');
 
 function statistic(string $title, $value): void
 {
@@ -45,14 +43,15 @@ function statistic(string $title, $value): void
         $value();
         $value = ob_get_clean();
     } else {
-        $value = ' <h2 class="p-3 m-0 font-weight-lighter">' .$value . '</h2>';
+        $value = ' <h2 class="p-3 m-0 font-weight-lighter">'.$value.'</h2>';
     } ?>
     <article class="card">
         <div class="card-body text-left d-flex p-0">
-            <h3 class="card-title text-uppercase text-right bg-dark text-white p-3 font-weight-lighter m-0 " style="width: 25%">
+            <h3 class="card-title text-uppercase text-right bg-dark text-white p-3 font-weight-lighter m-0 "
+                style="width: 25%">
                 <?= $title; ?>
             </h3>
-           <?= $value ?>
+            <?= $value; ?>
         </div>
     </article>
     <?php
@@ -79,8 +78,9 @@ function statistic(string $title, $value): void
     ?>
             <div class="list-group list-group-flush flex-fill">
                 <?php foreach ($pendingProposals as $proposal) { ?>
-                    <a class="list-group-item list-group-item-action" href=" <?= $proposal->getUrl(); ?>" target="_blank   ">
-                            <?= $proposal->title; ?>
+                    <a class="list-group-item list-group-item-action" href=" <?= $proposal->getUrl(); ?>"
+                       target="_blank   ">
+                        <?= $proposal->title; ?>
                         by <strong><?= $proposal->author; ?></strong>
                     </a>
                 <?php } ?>
