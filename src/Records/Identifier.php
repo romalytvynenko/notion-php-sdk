@@ -9,9 +9,9 @@ use Ramsey\Uuid\UuidInterface;
 
 class Identifier extends Uuid
 {
-    public static function fromString($name)
+    public static function fromString(string $uuid): UuidInterface
     {
-        return Str::contains($name, 'http') ? static::fromUrl($name) : parent::fromString($name);
+        return Str::contains($uuid, 'http') ? static::fromUrl($uuid) : parent::fromString($uuid);
     }
 
     public static function fromUrl(string $url): UuidInterface
