@@ -1,5 +1,5 @@
 {
-    "name": "madewithlove/notion-php-sdk",
+    "name": "vitorhugoro1/notion-php-sdk",
     "description": "An unofficial PHP SDK for Notion",
     "license": "MIT",
     "require": {
