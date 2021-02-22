@@ -5,7 +5,7 @@
     "require": {
         "ext-json": "*",
         "guzzlehttp/guzzle": "^7.0",
-        "illuminate/support": "^7.0",
+        "illuminate/support": "^8.0",
         "league/commonmark": "^1.5.3",
         "league/uri": "^6.0",
         "ramsey/uuid": "^4.0",
